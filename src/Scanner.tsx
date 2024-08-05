@@ -1,5 +1,5 @@
 import QrScanner from 'qr-scanner'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useObjectUrl } from './lib/useObjectUrl'
 
 type ScanState =
@@ -21,6 +21,8 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
   const [scanState, setScanState] = useState<ScanState>({
     type: 'awaiting-image'
   })
+  const video = useRef<HTMLVideoElement | null>(null)
+  const [usingCamera, setUsingCamera] = useState(false)
 
   async function handleImage (blob: Blob): Promise<void> {
     onUse()
@@ -78,6 +80,21 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
           }}
         />
       </label>
+      <button
+        onClick={() => {
+          if (video.current) {
+            const scanner = new QrScanner(video.current, console.log, {
+              returnDetailedScanResult: true
+            })
+            scanner.start()
+            console.log(scanner)
+            setUsingCamera(true)
+          }
+        }}
+      >
+        Scan with camera
+      </button>
+      <video ref={video} style={{ display: usingCamera ? '' : 'none' }} />
       {imageUrl ? (
         scanState.type === 'result' ? (
           <svg
