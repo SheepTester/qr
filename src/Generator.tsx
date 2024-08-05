@@ -5,8 +5,14 @@ export type GeneratorProps = {
   welcome: boolean
   hidden: boolean
   onUse: () => void
+  onKeyboard: (visible: boolean) => void
 }
-export function Generator ({ welcome, hidden, onUse }: GeneratorProps) {
+export function Generator ({
+  welcome,
+  hidden,
+  onUse,
+  onKeyboard
+}: GeneratorProps) {
   const [text, setText] = useState('')
   const context = useRef<CanvasRenderingContext2D | null>(null)
 
@@ -33,6 +39,26 @@ export function Generator ({ welcome, hidden, onUse }: GeneratorProps) {
       context.current.canvas.height = 0
     }
   }, [text])
+
+  useEffect(() => {
+    if (navigator.virtualKeyboard) {
+      navigator.virtualKeyboard.overlaysContent = true
+
+      const handleGeometryChange = () => {
+        onKeyboard(!!navigator.virtualKeyboard?.boundingRect.height)
+      }
+      navigator.virtualKeyboard.addEventListener(
+        'geometrychange',
+        handleGeometryChange
+      )
+      return () => {
+        navigator.virtualKeyboard?.removeEventListener(
+          'geometrychange',
+          handleGeometryChange
+        )
+      }
+    }
+  }, [])
 
   return (
     <div

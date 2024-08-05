@@ -7,9 +7,10 @@ type Tab = 'welcome' | 'scan' | 'generate'
 
 export function App () {
   const [tab, setTab] = useState<Tab>('welcome')
+  const [keyboardVisible, setKeyboardVisible] = useState(false)
   return (
     <main className={`main ${tab === 'welcome' ? 'welcome' : ''}`}>
-      {tab !== 'welcome' ? (
+      {tab !== 'welcome' && !keyboardVisible ? (
         <div className={`tabs tab-selected-${tab}`}>
           <button className='tab tab-scan' onClick={() => setTab('scan')}>
             Scan
@@ -36,6 +37,7 @@ export function App () {
         welcome={tab === 'welcome'}
         hidden={tab === 'scan'}
         onUse={() => setTab('generate')}
+        onKeyboard={setKeyboardVisible}
       />
     </main>
   )
