@@ -1,0 +1,16 @@
+{
+  "scripts": {
+    "build": "cp -a static/. dist/ && esbuild --bundle src/index.tsx --loader:.svg=file --outdir=dist --supported:nesting=false --minify && find dist/ -type f | sed 's/dist\\//https:\\/\\/sheeptester.github.io\\/qr\\//' > dist/sitemap.txt",
+    "clean": "rm -rf dist/",
+    "dev": "esbuild --bundle src/index.tsx --loader:.svg=file --outdir=static --servedir=static --sourcemap"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "esbuild": "^0.23.0"
+  }
+}
