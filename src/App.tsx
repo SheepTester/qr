@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import './App.css'
-import { Scanner } from './Scanner'
-import { Generator } from './Generator'
+import styles from './App.module.css'
+import { Generator } from './generator'
+import './global.css'
+import { Scanner } from './scanner'
 
 type Tab = 'welcome' | 'scan' | 'generate'
 
@@ -9,14 +10,17 @@ export function App () {
   const [tab, setTab] = useState<Tab>('welcome')
   const [keyboardVisible, setKeyboardVisible] = useState(false)
   return (
-    <main className={`main ${tab === 'welcome' ? 'welcome' : ''}`}>
+    <main className={`${styles.main} ${tab === 'welcome' ? 'welcome' : ''}`}>
       {tab !== 'welcome' && !keyboardVisible ? (
-        <div className={`tabs tab-selected-${tab}`}>
-          <button className='tab tab-scan' onClick={() => setTab('scan')}>
+        <div className={`${styles.tabs} ${styles[`tabSelected-${tab}`]}`}>
+          <button
+            className={`${styles.tab} ${styles.tabScan}`}
+            onClick={() => setTab('scan')}
+          >
             Scan
           </button>
           <button
-            className='tab tab-generate'
+            className={`${styles.tab} ${styles.tabGenerate}`}
             onClick={() => setTab('generate')}
           >
             Generate
@@ -29,8 +33,8 @@ export function App () {
         onUse={() => setTab('scan')}
       />
       {tab === 'welcome' ? (
-        <div className='or-wrapper'>
-          <div className='or'>or</div>
+        <div className={styles.orWrapper}>
+          <div className={styles.or}>or</div>
         </div>
       ) : null}
       <Generator

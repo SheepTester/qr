@@ -1,0 +1,28 @@
+html,
+body,
+#root {
+  height: 100%;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    'Segoe UI Symbol';
+  margin: 0;
+  box-sizing: border-box;
+  padding-bottom: env(keyboard-inset-height, 0px);
+}
+textarea,
+button,
+input {
+  font: inherit;
+  color: inherit;
+  border: none;
+  background: none;
+}
+button:not(:disabled) {
+  cursor: pointer;
+}
+::placeholder {
+  color: inherit;
+  opacity: 0.5;
+}

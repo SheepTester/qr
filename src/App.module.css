@@ -1,0 +1,54 @@
+.main {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+:global(.welcome) {
+  flex-direction: row;
+  @media (max-width: 950px) {
+    flex-direction: column;
+  }
+}
+
+.orWrapper {
+  align-self: center;
+  position: relative;
+}
+.or {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 3px solid #030712;
+  padding: 5px 10px;
+  border-radius: 50px;
+  text-transform: uppercase;
+  font-size: 0.8em;
+}
+
+.tabs {
+  display: flex;
+}
+.tab {
+  flex: 1 0 0;
+  height: 40px;
+}
+.tabGenerate {
+  background-color: white;
+  color: #030712;
+}
+.tabSelected-generate {
+  background-color: white;
+  & .tabScan {
+    border-bottom-right-radius: 10px;
+  }
+}
+.tabScan {
+  background-color: #030712;
+  color: #f3f4f6;
+}
+.tabSelected-scan {
+  background-color: #030712;
+  & .tabGenerate {
+    border-bottom-left-radius: 10px;
+  }
+}

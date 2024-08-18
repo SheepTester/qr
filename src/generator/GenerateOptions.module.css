@@ -1,0 +1,57 @@
+.labelWrapper {
+  display: flex;
+  align-items: center;
+  @media (max-width: 460px) {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+}
+.label {
+  width: 125px;
+  flex: none;
+  white-space: nowrap;
+}
+.buttonGroup {
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  overflow: hidden;
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.ecl {
+  padding: 5px 10px;
+  display: grid;
+  gap: 0 5px;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    'letter percent'
+    'name name';
+  cursor: pointer;
+  &:not(.eclSelected):hover {
+    background-color: #f9fafb;
+  }
+}
+.eclSelected {
+  background-color: #f43f5e;
+  color: white;
+}
+.eclLetter {
+  font-weight: bold;
+  grid-area: letter;
+}
+.eclName {
+  grid-area: name;
+  font-size: 0.8em;
+}
+.eclPercent {
+  grid-area: percent;
+}
+.input {
+  height: 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  flex: auto;
+  padding: 0 10px;
+}

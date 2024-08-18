@@ -1,0 +1,16 @@
+.generateWrapper {
+  background-color: white;
+  color: #030712;
+}
+.generatedQr {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  height: 0;
+  margin: auto 0;
+  flex: auto;
+  object-fit: contain;
+  box-sizing: border-box;
+  @media (max-aspect-ratio: 1.25) {
+    padding: 60px 0;
+  }
+}

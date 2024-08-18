@@ -1,0 +1,75 @@
+.generateBtnsWrapper {
+  position: relative;
+  text-align: left;
+  transition: opacity 0.2s;
+}
+.generateBtnsEmpty {
+  opacity: 0;
+}
+.generateBtns {
+  position: absolute;
+  inset: 0;
+  top: auto;
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px;
+}
+.generateBtn {
+  display: flex;
+  padding: 12px;
+  & svg {
+    stroke: #6b7280;
+  }
+  .genPanelWrapper:hover &,
+  .genPanelWrapper:focus-within &,
+  &:hover {
+    svg {
+      stroke: #111827;
+    }
+  }
+}
+.genPanelWrapper {
+  position: relative;
+}
+.genPanel {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1), 0 5px 20px rgba(0, 0, 0, 0.1);
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(10px);
+  visibility: hidden;
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+  .genPanelWrapper:hover &,
+  .genPanelWrapper:focus-within & {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+  }
+}
+.downloads {
+  right: 50%;
+  transform: translate(50%, 10px);
+  .genPanelWrapper:hover &,
+  .genPanelWrapper:focus-within & {
+    transform: translateX(50%);
+  }
+}
+.downloadBtn {
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  &:hover {
+    background-color: #f9fafb;
+  }
+}
+.settings {
+  padding: 10px;
+  gap: 10px;
+}

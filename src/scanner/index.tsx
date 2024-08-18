@@ -1,6 +1,8 @@
-import QrScanner from './lib/qr-scanner'
 import { useEffect, useRef, useState } from 'react'
-import { useObjectUrl } from './lib/useObjectUrl'
+import common from '../common.module.css'
+import QrScanner from '../lib/qr-scanner'
+import { useObjectUrl } from '../lib/useObjectUrl'
+import styles from './index.module.css'
 
 type ScanState =
   | {
@@ -117,17 +119,18 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
 
   return (
     <div
-      className='section scanner-wrapper'
+      className={`${common.section} ${styles.scannerWrapper}`}
       style={{ display: hidden ? 'none' : '' }}
     >
-      {welcome ? <h2 className='heading'>Scan a QR code</h2> : null}
-      <div className='choose'>
+      {welcome ? <h2 className={common.heading}>Scan a QR code</h2> : null}
+      <div className={styles.choose}>
         <label>
-          Paste, drag, or <span className='choose-file'>choose an image</span>
+          Paste, drag, or{' '}
+          <span className={styles.chooseFile}>choose an image</span>
           <input
             type='file'
             accept='image/*'
-            className='visually-hidden'
+            className={common.visuallyHidden}
             onChange={e => {
               const file = e.currentTarget.files?.[0]
               if (file) {
@@ -136,10 +139,10 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
             }}
           />
         </label>
-        <span className='or-scan-option'>or</span>
+        <span className={styles.orScanOption}>or</span>
         {media?.type === 'video' ? (
           <button
-            className='scan-btn'
+            className={styles.scanBtn}
             onClick={() => {
               scannerRef.current?.stop()
               setMedia(null)
@@ -149,21 +152,21 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
             Stop scanning
           </button>
         ) : (
-          <button className='scan-btn' onClick={handleStartScan}>
+          <button className={styles.scanBtn} onClick={handleStartScan}>
             Scan with camera
           </button>
         )}
       </div>
       <div
-        className='height-constraint'
+        className={styles.heightConstraint}
         style={{ display: media ? '' : 'none' }}
       >
         <div
-          className='width-constraint'
+          className={styles.widthConstraint}
           style={{ aspectRatio: `${scanState.width} / ${scanState.height}` }}
         >
           <svg
-            className='selected-image'
+            className={styles.selectedImage}
             viewBox={`0 0 ${scanState.width} ${scanState.height}`}
           >
             <foreignObject
@@ -174,7 +177,6 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
             >
               <video
                 ref={videoRef}
-                className='selected-image'
                 style={{ display: media?.type === 'video' ? '' : 'none' }}
               />
             </foreignObject>
@@ -184,7 +186,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
                 y={media.region.y}
                 width={media.region.width}
                 height={media.region.height}
-                className='scan-region'
+                className={styles.scanRegion}
               />
             ) : null}
             {imageUrl ? (
@@ -199,10 +201,10 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
                 {media?.type === 'image' ? (
                   <path
                     d={`M 0 0 H ${scanState.width} V ${scanState.height} H 0 z ${outlinePath}`}
-                    className='shadow'
+                    className={styles.shadow}
                   />
                 ) : null}
-                <path d={outlinePath} className='shadow-outline' />
+                <path d={outlinePath} className={styles.shadowOutline} />
               </>
             ) : null}
           </svg>
