@@ -107,10 +107,9 @@ button:not(:disabled) {
   margin: auto 0;
   flex: auto;
   object-fit: contain;
-  padding: 40px;
   box-sizing: border-box;
-  @media (max-width: 600px) {
-    padding: 72px 40px;
+  @media (max-aspect-ratio: 1.25) {
+    padding: 60px 0;
   }
 }
 .qr-text-wrapper {
@@ -261,7 +260,7 @@ button:not(:disabled) {
 }
 .ecl-selected {
   background-color: #f43f5e;
-  color: #030712;
+  color: white;
 }
 .ecl-letter {
   font-weight: bold;

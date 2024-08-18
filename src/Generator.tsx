@@ -1,6 +1,10 @@
-import { create, QRCodeErrorCorrectionLevel } from 'qrcode'
+import { create, QRCodeErrorCorrectionLevel, toCanvas, toString } from 'qrcode'
 import { useEffect, useId, useRef, useState } from 'react'
 import * as Icon from 'react-feather'
+import { download } from './lib/download'
+
+/** Modules (pixels) of quiet zone (whitespace) around the QR code */
+const QUIET_ZONE = 4
 
 export type GeneratorProps = {
   welcome: boolean
@@ -34,15 +38,53 @@ export function Generator ({
         ),
         code.modules.size
       )
-      context.current.canvas.width = code.modules.size
-      context.current.canvas.height = code.modules.size
-      context.current.canvas.style.maxHeight = `${code.modules.size * 20}px`
-      context.current.putImageData(image, 0, 0)
+      context.current.canvas.width = code.modules.size + QUIET_ZONE * 2
+      context.current.canvas.height = code.modules.size + QUIET_ZONE * 2
+      context.current.canvas.style.setProperty(
+        '--module-size',
+        `${code.modules.size}`
+      )
+      context.current.putImageData(image, QUIET_ZONE, QUIET_ZONE)
     } catch {
       context.current.canvas.width = 0
       context.current.canvas.height = 0
     }
   }, [text, ecl])
+
+  async function getPng (): Promise<Blob> {
+    const canvas = await toCanvas(text, {
+      errorCorrectionLevel: ecl,
+      scale: +pixelSize,
+      color: {
+        dark: '#000',
+        // Transparent
+        light: '#0000'
+      }
+    })
+    return new Promise((resolve, reject) =>
+      canvas.toBlob(
+        blob =>
+          blob
+            ? resolve(blob)
+            : reject(new Error('Failed to generate blob from canvas')),
+        'image/png'
+      )
+    )
+  }
+
+  async function getSvg (): Promise<Blob> {
+    const svg = await toString(text, {
+      type: 'svg',
+      errorCorrectionLevel: ecl,
+      scale: +pixelSize,
+      color: {
+        dark: '#000',
+        // Transparent
+        light: '#0000'
+      }
+    })
+    return new Blob([svg], { type: 'image/svg+xml' })
+  }
 
   useEffect(() => {
     if (navigator.virtualKeyboard) {
@@ -86,10 +128,9 @@ export function Generator ({
             <button
               className='generate-btn'
               onClick={async () => {
+                const png = await getPng()
                 navigator.clipboard.write([
-                  new ClipboardItem({
-                    'text/plain': new Blob(['todo'], { type: 'text/plain' })
-                  })
+                  new ClipboardItem({ [png.type]: png })
                 ])
               }}
               title='Copy QR code as PNG'
@@ -101,10 +142,16 @@ export function Generator ({
                 <Icon.Download aria-label='Download as...' />
               </button>
               <div className='gen-panel downloads'>
-                <button className='download-btn'>
+                <button
+                  className='download-btn'
+                  onClick={async () => download(await getPng(), 'qr-code.png')}
+                >
                   <Icon.Download aria-hidden /> PNG
                 </button>
-                <button className='download-btn'>
+                <button
+                  className='download-btn'
+                  onClick={async () => download(await getSvg(), 'qr-code.svg')}
+                >
                   <Icon.Download aria-hidden /> SVG
                 </button>
               </div>
