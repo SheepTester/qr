@@ -179,7 +179,13 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
               />
             </foreignObject>
             {media?.type === 'video' ? (
-              <rect {...media.region} className='scan-region' />
+              <rect
+                x={media.region.x}
+                y={media.region.y}
+                width={media.region.width}
+                height={media.region.height}
+                className='scan-region'
+              />
             ) : null}
             {imageUrl ? (
               <image

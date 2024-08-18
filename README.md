@@ -10,11 +10,11 @@ I don't think I've seen a web-based app that can both generate and scan QR codes
 
 I plan to have the following features:
 
-- [ ] Generator
+- Generator
   - [x] text input at bottom
   - [x] show ECL levels with percentages
-  - [ ] copy or download PNG and SVG
-- [ ] Scanner
+  - [x] copy or download PNG and SVG
+- Scanner
   - [x] paste image
   - [ ] drop image
   - [x] select image

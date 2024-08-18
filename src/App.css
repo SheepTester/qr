@@ -312,6 +312,9 @@ button:not(:disabled) {
   padding: 10px 15px;
   border-radius: 5px;
   margin: 6px 3px;
+  &:hover {
+    background-color: #e11d48;
+  }
 }
 .height-constraint {
   height: 0;

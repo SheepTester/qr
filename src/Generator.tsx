@@ -22,6 +22,8 @@ export function Generator ({
   const [text, setText] = useState('')
   const [ecl, setEcl] = useState<QRCodeErrorCorrectionLevel>('M')
   const [pixelSize, setPixelSize] = useState('10')
+  const [copied, setCopied] = useState(false)
+  const copyTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   const context = useRef<CanvasRenderingContext2D | null>(null)
 
   useEffect(() => {
@@ -106,6 +108,8 @@ export function Generator ({
     }
   }, [])
 
+  const CopyIcon = copied ? Icon.Check : Icon.Copy
+
   return (
     <div
       className='section generate-wrapper'
@@ -128,14 +132,23 @@ export function Generator ({
             <button
               className='generate-btn'
               onClick={async () => {
+                setCopied(false)
+                if (copyTimeout.current !== null) {
+                  clearTimeout(copyTimeout.current)
+                }
                 const png = await getPng()
                 navigator.clipboard.write([
                   new ClipboardItem({ [png.type]: png })
                 ])
+                setCopied(true)
+                copyTimeout.current = setTimeout(() => {
+                  setCopied(false)
+                  copyTimeout.current = null
+                }, 1000)
               }}
               title='Copy QR code as PNG'
             >
-              <Icon.Copy aria-label='Copy QR code as PNG' />
+              <CopyIcon aria-label='Copy QR code as PNG' />
             </button>
             <div className='gen-panel-wrapper'>
               <button className='generate-btn'>
