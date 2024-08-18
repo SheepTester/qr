@@ -1,0 +1,185 @@
+.generateWrapper,
+.tabGenerate {
+  background-color: white;
+  color: #030712;
+}
+.generatedQr {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  height: 0;
+  margin: auto 0;
+  flex: auto;
+  object-fit: contain;
+  box-sizing: border-box;
+  @media (max-aspect-ratio: 1.25) {
+    padding: 60px 0;
+  }
+}
+.qrTextWrapper {
+  position: relative;
+  flex: none;
+  max-height: 150px;
+  overflow: hidden;
+  :global(.welcome) & {
+    margin: 0 40px;
+    height: 65px;
+    & textarea {
+      overflow: hidden;
+    }
+  }
+}
+.qrText,
+.qrTextSizer {
+  padding: 20px;
+  border-top: 1px solid #9ca3af;
+  :global(.welcome) & {
+    border: 1px solid #9ca3af;
+    border-radius: 10px;
+  }
+}
+.qrText {
+  position: absolute;
+  inset: 0;
+  resize: none;
+  &:focus {
+    outline: none;
+  }
+}
+.qrTextSizer {
+  visibility: hidden;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+}
+.generateBtnsWrapper {
+  position: relative;
+  text-align: left;
+  transition: opacity 0.2s;
+}
+.generateBtnsEmpty {
+  opacity: 0;
+}
+.generateBtns {
+  position: absolute;
+  inset: 0;
+  top: auto;
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px;
+}
+.generateBtn {
+  display: flex;
+  padding: 12px;
+  & svg {
+    stroke: #6b7280;
+  }
+  .genPanelWrapper:hover &,
+  .genPanelWrapper:focus-within &,
+  &:hover {
+    svg {
+      stroke: #111827;
+    }
+  }
+}
+.genPanelWrapper {
+  position: relative;
+}
+.genPanel {
+  position: absolute;
+  bottom: 100%;
+  right: 0;
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1), 0 5px 20px rgba(0, 0, 0, 0.1);
+  width: max-content;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  transform: translateY(10px);
+  visibility: hidden;
+  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+  .genPanelWrapper:hover &,
+  .genPanelWrapper:focus-within & {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+  }
+}
+.downloads {
+  right: 50%;
+  transform: translate(50%, 10px);
+  .genPanelWrapper:hover &,
+  .genPanelWrapper:focus-within & {
+    transform: translateX(50%);
+  }
+}
+.downloadBtn {
+  padding: 10px;
+  display: flex;
+  gap: 10px;
+  &:hover {
+    background-color: #f9fafb;
+  }
+}
+.settings {
+  padding: 10px;
+  gap: 10px;
+}
+.labelWrapper {
+  display: flex;
+  align-items: center;
+  @media (max-width: 460px) {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+}
+.label {
+  width: 125px;
+  flex: none;
+  white-space: nowrap;
+}
+.buttonGroup {
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  overflow: hidden;
+  flex: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.ecl {
+  padding: 5px 10px;
+  display: grid;
+  gap: 0 5px;
+  grid-template-columns: auto auto;
+  grid-template-areas:
+    'letter percent'
+    'name name';
+  cursor: pointer;
+  &:not(.eclSelected):hover {
+    background-color: #f9fafb;
+  }
+}
+.eclSelected {
+  background-color: #f43f5e;
+  color: white;
+}
+.eclLetter {
+  font-weight: bold;
+  grid-area: letter;
+}
+.eclName {
+  grid-area: name;
+  font-size: 0.8em;
+}
+.eclPercent {
+  grid-area: percent;
+}
+.input {
+  height: 40px;
+  border: 1px solid #e5e7eb;
+  border-radius: 5px;
+  flex: auto;
+  padding: 0 10px;
+}

@@ -1,6 +1,7 @@
 import { create, QRCodeErrorCorrectionLevel, toCanvas, toString } from 'qrcode'
 import { useEffect, useId, useRef, useState } from 'react'
 import * as Icon from 'react-feather'
+import styles from './Generator.module.css'
 import { download } from './lib/download'
 
 /** Modules (pixels) of quiet zone (whitespace) around the QR code */
@@ -112,25 +113,25 @@ export function Generator ({
 
   return (
     <div
-      className='section generate-wrapper'
+      className={`section ${styles.generateWrapper}`}
       style={{ display: hidden ? 'none' : '' }}
     >
-      {welcome ? <h2 className='heading'>Generate a QR code</h2> : null}
+      {welcome ? <h2 className={`heading`}>Generate a QR code</h2> : null}
       {!welcome ? (
         <canvas
-          className='generated-qr'
+          className={styles.generatedQr}
           ref={canvas => (context.current = canvas?.getContext('2d') ?? null)}
         />
       ) : null}
       {!welcome ? (
         <div
-          className={`generate-btns-wrapper ${
-            text === '' ? 'generate-btns-empty' : ''
+          className={`${styles.generateBtnsWrapper} ${
+            text === '' ? styles.generateBtnsEmpty : ''
           }`}
         >
-          <div className='generate-btns'>
+          <div className={styles.generateBtns}>
             <button
-              className='generate-btn'
+              className={styles.generateBtn}
               onClick={async () => {
                 setCopied(false)
                 if (copyTimeout.current !== null) {
@@ -150,107 +151,115 @@ export function Generator ({
             >
               <CopyIcon aria-label='Copy QR code as PNG' />
             </button>
-            <div className='gen-panel-wrapper'>
-              <button className='generate-btn'>
+            <div className={styles.genPanelWrapper}>
+              <button className={styles.generateBtn}>
                 <Icon.Download aria-label='Download as...' />
               </button>
-              <div className='gen-panel downloads'>
+              <div className={`${styles.genPanel} ${styles.downloads}`}>
                 <button
-                  className='download-btn'
+                  className={styles.downloadBtn}
                   onClick={async () => download(await getPng(), 'qr-code.png')}
                 >
                   <Icon.Download aria-hidden /> PNG
                 </button>
                 <button
-                  className='download-btn'
+                  className={styles.downloadBtn}
                   onClick={async () => download(await getSvg(), 'qr-code.svg')}
                 >
                   <Icon.Download aria-hidden /> SVG
                 </button>
               </div>
             </div>
-            <div className='gen-panel-wrapper'>
-              <button className='generate-btn'>
+            <div className={styles.genPanelWrapper}>
+              <button className={styles.generateBtn}>
                 <Icon.Settings aria-label='Settings' />
               </button>
-              <div className='gen-panel settings'>
+              <div className={`${styles.genPanel} ${styles.settings}`}>
                 <div
                   role='radiogroup'
-                  className='label-wrapper'
+                  className={styles.labelWrapper}
                   aria-labelledby={`${id}-ecl`}
                 >
-                  <div className='label' id={`${id}-ecl`}>
+                  <div className={styles.label} id={`${id}-ecl`}>
                     Error resistance
                   </div>
-                  <div className='button-group'>
+                  <div className={styles.buttonGroup}>
                     <label
-                      className={`ecl ${ecl === 'L' ? 'ecl-selected' : ''}`}
+                      className={`${styles.ecl} ${
+                        ecl === 'L' ? styles.eclSelected : ''
+                      }`}
                     >
                       <input
-                        className='visually-hidden'
+                        className={`visually-hidden`}
                         type='radio'
                         name='ecl'
                         value='L'
                         checked={ecl === 'L'}
                         onChange={e => e.currentTarget.checked && setEcl('L')}
                       />
-                      <span className='ecl-letter'>L</span>
-                      <span className='ecl-name'>Low</span>
-                      <span className='ecl-percent'>7%</span>
+                      <span className={styles.eclLetter}>L</span>
+                      <span className={styles.eclName}>Low</span>
+                      <span className={styles.eclPercent}>7%</span>
                     </label>
                     <label
-                      className={`ecl ${ecl === 'M' ? 'ecl-selected' : ''}`}
+                      className={`${styles.ecl} ${
+                        ecl === 'M' ? styles.eclSelected : ''
+                      }`}
                     >
                       <input
-                        className='visually-hidden'
+                        className={`visually-hidden`}
                         type='radio'
                         name='ecl'
                         value='M'
                         checked={ecl === 'M'}
                         onChange={e => e.currentTarget.checked && setEcl('M')}
                       />
-                      <span className='ecl-letter'>M</span>
-                      <span className='ecl-name'>Medium</span>
-                      <span className='ecl-percent'>15%</span>
+                      <span className={styles.eclLetter}>M</span>
+                      <span className={styles.eclName}>Medium</span>
+                      <span className={styles.eclPercent}>15%</span>
                     </label>
                     <label
-                      className={`ecl ${ecl === 'Q' ? 'ecl-selected' : ''}`}
+                      className={`${styles.ecl} ${
+                        ecl === 'Q' ? styles.eclSelected : ''
+                      }`}
                     >
                       <input
-                        className='visually-hidden'
+                        className={`visually-hidden`}
                         type='radio'
                         name='ecl'
                         value='Q'
                         checked={ecl === 'Q'}
                         onChange={e => e.currentTarget.checked && setEcl('Q')}
                       />
-                      <span className='ecl-letter'>Q</span>
-                      <span className='ecl-name'>Quartile</span>
-                      <span className='ecl-percent'>25%</span>
+                      <span className={styles.eclLetter}>Q</span>
+                      <span className={styles.eclName}>Quartile</span>
+                      <span className={styles.eclPercent}>25%</span>
                     </label>
                     <label
-                      className={`ecl ${ecl === 'H' ? 'ecl-selected' : ''}`}
+                      className={`${styles.ecl} ${
+                        ecl === 'H' ? styles.eclSelected : ''
+                      }`}
                     >
                       <input
-                        className='visually-hidden'
+                        className={`visually-hidden`}
                         type='radio'
                         name='ecl'
                         value='H'
                         checked={ecl === 'H'}
                         onChange={e => e.currentTarget.checked && setEcl('H')}
                       />
-                      <span className='ecl-letter'>H</span>
-                      <span className='ecl-name'>High</span>
-                      <span className='ecl-percent'>30%</span>
+                      <span className={styles.eclLetter}>H</span>
+                      <span className={styles.eclName}>High</span>
+                      <span className={styles.eclPercent}>30%</span>
                     </label>
                   </div>
                 </div>
-                <label className='label-wrapper'>
-                  <span className='label'>Export pixel size</span>
+                <label className={styles.labelWrapper}>
+                  <span className={styles.label}>Export pixel size</span>
                   <input
                     type='number'
                     name='pixel-size'
-                    className='input'
+                    className={styles.input}
                     value={pixelSize}
                     onChange={e => setPixelSize(e.currentTarget.value)}
                   />
@@ -260,16 +269,16 @@ export function Generator ({
           </div>
         </div>
       ) : null}
-      <div className='qr-text-wrapper'>
+      <div className={styles.qrTextWrapper}>
         <textarea
-          className='qr-text'
+          className={styles.qrText}
           placeholder='Text or URL'
           aria-label='Text or URL to encode in QR code'
           value={text}
           onChange={e => setText(e.currentTarget.value)}
           onFocus={onUse}
         />
-        <div aria-hidden className='qr-text-sizer'>
+        <div aria-hidden className={styles.qrTextSizer}>
           {text}&nbsp;
         </div>
       </div>

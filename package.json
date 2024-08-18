@@ -1,15 +1,16 @@
 {
   "scripts": {
-    "build": "cp -a static/. dist/ && esbuild --bundle src/index.tsx --loader:.svg=file --outdir=dist --supported:nesting=false --minify && find dist/ -type f | sed 's/dist\\//https:\\/\\/sheeptester.github.io\\/qr\\//' > dist/sitemap.txt",
+    "build": "cp -a static/. dist/ && tcm -p 'src/**/*.module.css' && esbuild --bundle src/index.tsx --loader:.svg=file --outdir=dist --supported:nesting=false --minify && find dist/ -type f | sed 's/dist\\//https:\\/\\/sheeptester.github.io\\/qr\\//' > dist/sitemap.txt",
     "clean": "rm -rf dist/",
-    "dev": "esbuild --bundle src/index.tsx --loader:.svg=file --outdir=static --servedir=static --sourcemap"
+    "dev": "tcm -p 'src/**/*.module.css' -w & esbuild --bundle src/index.tsx --loader:.svg=file --outdir=static --servedir=static --sourcemap"
   },
   "dependencies": {
     "qr-scanner": "^1.4.2",
     "qrcode": "^1.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-feather": "^2.0.10"
+    "react-feather": "^2.0.10",
+    "typed-css-modules": "^0.9.1"
   },
   "devDependencies": {
     "@types/qrcode": "^1.5.5",
