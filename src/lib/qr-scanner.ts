@@ -29,14 +29,6 @@ class QrScanner {
   private static _disableBarcodeDetector = false
   private static _workerMessageId = 0
 
-  /** @deprecated */
-  static set WORKER_PATH (workerPath: string) {
-    console.warn(
-      'Setting QrScanner.WORKER_PATH is not required and not supported anymore. ' +
-        'Have a look at the README for new setup instructions.'
-    )
-  }
-
   static async hasCamera (): Promise<boolean> {
     try {
       return !!(await QrScanner.listCameras(false)).length
@@ -125,110 +117,20 @@ class QrScanner {
       /** just a temporary flag until we switch entirely to the new api */
       returnDetailedScanResult?: true
     }
-  )
-  /** @deprecated */
-  constructor (
-    video: HTMLVideoElement,
-    onDecode: (result: string) => void,
-    onDecodeError?: (error: Error | string) => void,
-    calculateScanRegion?: (video: HTMLVideoElement) => QrScanner.ScanRegion,
-    preferredCamera?: QrScanner.FacingMode | QrScanner.DeviceId
-  )
-  /** @deprecated */
-  constructor (
-    video: HTMLVideoElement,
-    onDecode: (result: string) => void,
-    onDecodeError?: (error: Error | string) => void,
-    canvasSize?: number,
-    preferredCamera?: QrScanner.FacingMode | QrScanner.DeviceId
-  )
-  /** @deprecated */
-  constructor (
-    video: HTMLVideoElement,
-    onDecode: (result: string) => void,
-    canvasSize?: number
-  )
-  constructor (
-    video: HTMLVideoElement,
-    onDecode:
-      | ((result: QrScanner.ScanResult) => void)
-      | ((result: string) => void),
-    canvasSizeOrOnDecodeErrorOrOptions?:
-      | number
-      | ((error: Error | string) => void)
-      | {
-          onDecodeError?: (error: Error | string) => void
-          calculateScanRegion?: (
-            video: HTMLVideoElement
-          ) => QrScanner.ScanRegion
-          preferredCamera?: QrScanner.FacingMode | QrScanner.DeviceId
-          maxScansPerSecond?: number
-          highlightScanRegion?: boolean
-          highlightCodeOutline?: boolean
-          overlay?: HTMLDivElement
-          /** just a temporary flag until we switch entirely to the new api */
-          returnDetailedScanResult?: true
-        },
-    canvasSizeOrCalculateScanRegion?:
-      | number
-      | ((video: HTMLVideoElement) => QrScanner.ScanRegion),
-    preferredCamera?: QrScanner.FacingMode | QrScanner.DeviceId
   ) {
     this.$video = video
     this.$canvas = document.createElement('canvas')
 
-    if (
-      canvasSizeOrOnDecodeErrorOrOptions &&
-      typeof canvasSizeOrOnDecodeErrorOrOptions === 'object'
-    ) {
+    if (options && typeof options === 'object') {
       // we got an options object using the new api
       this._onDecode = onDecode as QrScanner['_onDecode']
-    } else {
-      if (
-        canvasSizeOrOnDecodeErrorOrOptions ||
-        canvasSizeOrCalculateScanRegion ||
-        preferredCamera
-      ) {
-        console.warn(
-          "You're using a deprecated version of the QrScanner constructor which will be removed in " +
-            'the future'
-        )
-      } else {
-        // Only video and onDecode were specified and we can't distinguish between new or old api usage. For
-        // backwards compatibility we have to assume the old api for now. The options object is marked as non-
-        // optional in the parameter list above to make clear that ScanResult instead of string is only passed
-        // if an options object was provided. However, in the future once legacy support is removed, the options
-        // object should become optional.
-        console.warn(
-          'Note that the type of the scan result passed to onDecode will change in the future. ' +
-            'To already switch to the new api today, you can pass returnDetailedScanResult: true.'
-        )
-      }
-      this._legacyOnDecode = onDecode as QrScanner['_legacyOnDecode']
     }
 
-    const options =
-      typeof canvasSizeOrOnDecodeErrorOrOptions === 'object'
-        ? canvasSizeOrOnDecodeErrorOrOptions
-        : {}
-    this._onDecodeError =
-      options.onDecodeError ||
-      (typeof canvasSizeOrOnDecodeErrorOrOptions === 'function'
-        ? canvasSizeOrOnDecodeErrorOrOptions
-        : this._onDecodeError)
+    this._onDecodeError = options.onDecodeError || this._onDecodeError
     this._calculateScanRegion =
-      options.calculateScanRegion ||
-      (typeof canvasSizeOrCalculateScanRegion === 'function'
-        ? canvasSizeOrCalculateScanRegion
-        : this._calculateScanRegion)
-    this._preferredCamera =
-      options.preferredCamera || preferredCamera || this._preferredCamera
-    this._legacyCanvasSize =
-      typeof canvasSizeOrOnDecodeErrorOrOptions === 'number'
-        ? canvasSizeOrOnDecodeErrorOrOptions
-        : typeof canvasSizeOrCalculateScanRegion === 'number'
-        ? canvasSizeOrCalculateScanRegion
-        : this._legacyCanvasSize
+      options.calculateScanRegion || this._calculateScanRegion
+    this._preferredCamera = options.preferredCamera || this._preferredCamera
+    this._legacyCanvasSize = this._legacyCanvasSize
     this._maxScansPerSecond =
       options.maxScansPerSecond || this._maxScansPerSecond
 
@@ -534,108 +436,14 @@ class QrScanner {
       /** just a temporary flag until we switch entirely to the new api */
       returnDetailedScanResult?: true
     }
-  ): Promise<QrScanner.ScanResult>
-  /** @deprecated */
-  static async scanImage (
-    imageOrFileOrBlobOrUrl:
-      | HTMLImageElement
-      | HTMLVideoElement
-      | HTMLCanvasElement
-      | OffscreenCanvas
-      | ImageBitmap
-      | SVGImageElement
-      | File
-      | Blob
-      | URL
-      | String,
-    scanRegion?: QrScanner.ScanRegion | null,
-    qrEngine?:
-      | Worker
-      | BarcodeDetector
-      | Promise<Worker | BarcodeDetector>
-      | null,
-    canvas?: HTMLCanvasElement | null,
-    disallowCanvasResizing?: boolean,
-    alsoTryWithoutScanRegion?: boolean
-  ): Promise<string>
-  static async scanImage (
-    imageOrFileOrBlobOrUrl:
-      | HTMLImageElement
-      | HTMLVideoElement
-      | HTMLCanvasElement
-      | OffscreenCanvas
-      | ImageBitmap
-      | SVGImageElement
-      | File
-      | Blob
-      | URL
-      | String,
-    scanRegionOrOptions?:
-      | QrScanner.ScanRegion
-      | {
-          scanRegion?: QrScanner.ScanRegion | null
-          qrEngine?:
-            | Worker
-            | BarcodeDetector
-            | Promise<Worker | BarcodeDetector>
-            | null
-          canvas?: HTMLCanvasElement | null
-          disallowCanvasResizing?: boolean
-          alsoTryWithoutScanRegion?: boolean
-          /** just a temporary flag until we switch entirely to the new api */
-          returnDetailedScanResult?: true
-        }
-      | null,
-    qrEngine?:
-      | Worker
-      | BarcodeDetector
-      | Promise<Worker | BarcodeDetector>
-      | null,
-    canvas?: HTMLCanvasElement | null,
-    disallowCanvasResizing: boolean = false,
-    alsoTryWithoutScanRegion: boolean = false
-  ): Promise<string | QrScanner.ScanResult> {
+  ): Promise<QrScanner.ScanResult> {
     let scanRegion: QrScanner.ScanRegion | null | undefined
-    let returnDetailedScanResult = false
-    if (
-      scanRegionOrOptions &&
-      ('scanRegion' in scanRegionOrOptions ||
-        'qrEngine' in scanRegionOrOptions ||
-        'canvas' in scanRegionOrOptions ||
-        'disallowCanvasResizing' in scanRegionOrOptions ||
-        'alsoTryWithoutScanRegion' in scanRegionOrOptions ||
-        'returnDetailedScanResult' in scanRegionOrOptions)
-    ) {
-      // we got an options object using the new api
-      scanRegion = scanRegionOrOptions.scanRegion
-      qrEngine = scanRegionOrOptions.qrEngine
-      canvas = scanRegionOrOptions.canvas
-      disallowCanvasResizing =
-        scanRegionOrOptions.disallowCanvasResizing || false
-      alsoTryWithoutScanRegion =
-        scanRegionOrOptions.alsoTryWithoutScanRegion || false
-      returnDetailedScanResult = true
-    } else if (
-      scanRegionOrOptions ||
-      qrEngine ||
-      canvas ||
-      disallowCanvasResizing ||
-      alsoTryWithoutScanRegion
-    ) {
-      console.warn(
-        "You're using a deprecated api for scanImage which will be removed in the future."
-      )
-    } else {
-      // Only imageOrFileOrBlobOrUrl was specified and we can't distinguish between new or old api usage. For
-      // backwards compatibility we have to assume the old api for now. The options object is marked as non-
-      // optional in the parameter list above to make clear that ScanResult instead of string is only returned if
-      // an options object was provided. However, in the future once legacy support is removed, the options object
-      // should become optional.
-      console.warn(
-        'Note that the return type of scanImage will change in the future. To already switch to the ' +
-          'new api today, you can pass returnDetailedScanResult: true.'
-      )
-    }
+    // we got an options object using the new api
+    scanRegion = options.scanRegion
+    let qrEngine = options.qrEngine
+    let canvas = options.canvas
+    const disallowCanvasResizing = options.disallowCanvasResizing || false
+    const alsoTryWithoutScanRegion = options.alsoTryWithoutScanRegion || false
 
     const gotExternalEngine = !!qrEngine
 
@@ -760,18 +568,14 @@ class QrScanner {
           })()
         ])
       }
-      return returnDetailedScanResult
-        ? detailedScanResult
-        : detailedScanResult.data
+      return detailedScanResult
     } catch (e) {
       if (!scanRegion || !alsoTryWithoutScanRegion) throw e
       const detailedScanResult = await QrScanner.scanImage(
         imageOrFileOrBlobOrUrl,
         { qrEngine, canvas, disallowCanvasResizing }
       )
-      return returnDetailedScanResult
-        ? detailedScanResult
-        : detailedScanResult.data
+      return detailedScanResult
     } finally {
       if (!gotExternalEngine) {
         QrScanner._postWorkerMessage(qrEngine!, 'close')
@@ -805,20 +609,7 @@ class QrScanner {
     )
   }
 
-  static async createQrEngine (): Promise<Worker | BarcodeDetector>
-  /** @deprecated */
-  static async createQrEngine (
-    workerPath: string
-  ): Promise<Worker | BarcodeDetector>
-  static async createQrEngine (
-    workerPath?: string
-  ): Promise<Worker | BarcodeDetector> {
-    if (workerPath) {
-      console.warn(
-        'Specifying a worker path is not required and not supported anymore.'
-      )
-    }
-
+  static async createQrEngine (): Promise<Worker | BarcodeDetector> {
     const createWorker = () =>
       (
         import(
@@ -981,7 +772,7 @@ class QrScanner {
       overlayStyle.top = `${
         elementY + videoY + (regionY / videoHeight) * videoScaledHeight
       }px`
-      const isVideoMirrored = /scaleX\(-1\)/.test(video.style.transform!)
+      const isVideoMirrored = this.isVideoMirrored()
       overlayStyle.left = `${
         elementX +
         (isVideoMirrored ? elementWidth - videoX - videoScaledWidth : videoX) +
@@ -992,6 +783,14 @@ class QrScanner {
       // apply same mirror as on video
       overlayStyle.transform = video.style.transform
     })
+  }
+
+  isVideoMirrored () {
+    return /scaleX\(-1\)/.test(this.$video.style.transform)
+  }
+
+  get scanRegion (): QrScanner.ScanRegion {
+    return this._scanRegion
   }
 
   private static _convertPoints (

@@ -8,12 +8,11 @@ type ScanState =
       height: number
     } & (
       | { type: 'awaiting-image' | 'scanning' | 'no-result' }
-      | ({ type: 'result' } & QrScanner.ScanResult)
+      | ({ type: 'result'; mirrored?: boolean } & QrScanner.ScanResult)
     )
-type Camera = {
-  width: number
-  height: number
-}
+type SelectedMedia =
+  | { type: 'image'; image: Blob }
+  | { type: 'video'; region: QrScanner.ScanRegion }
 
 export type ScannerProps = {
   welcome: boolean
@@ -21,8 +20,8 @@ export type ScannerProps = {
   onUse: () => void
 }
 export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
-  const [image, setImage] = useState<Blob | 'video' | null>(null)
-  const imageUrl = useObjectUrl(image === 'video' ? null : image)
+  const [media, setMedia] = useState<SelectedMedia | null>(null)
+  const imageUrl = useObjectUrl(media?.type === 'image' ? media.image : null)
   const [scanState, setScanState] = useState<ScanState>({
     type: 'awaiting-image',
     width: 0,
@@ -34,7 +33,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
   async function handleImage (blob: Blob): Promise<void> {
     onUse()
     const bitmap = await createImageBitmap(blob)
-    setImage(blob)
+    setMedia({ type: 'image', image: blob })
     setScanState({
       type: 'scanning',
       width: bitmap.width,
@@ -66,7 +65,8 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
     setScanState(scanState => ({
       ...scanState,
       ...result,
-      type: 'result'
+      type: 'result',
+      mirrored: scannerRef.current?.isVideoMirrored()
     }))
   }
 
@@ -84,7 +84,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       width: video.videoWidth,
       height: video.videoHeight
     })
-    setImage('video')
+    setMedia({ type: 'video', region: scannerRef.current.scanRegion })
     onUse()
   }
 
@@ -102,6 +102,18 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       document.removeEventListener('paste', handlePaste)
     }
   }, [])
+
+  const outlinePath =
+    scanState.type === 'result'
+      ? `${scanState.cornerPoints
+          .map(
+            ({ x, y }, i) =>
+              `${i === 0 ? 'M' : 'L'} ${
+                scanState.mirrored ? scanState.width - x : x
+              } ${y}`
+          )
+          .join('')}z`
+      : null
 
   return (
     <div
@@ -145,9 +157,12 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
               <video
                 ref={videoRef}
                 className='selected-image'
-                style={{ display: image === 'video' ? '' : 'none' }}
+                style={{ display: media?.type === 'video' ? '' : 'none' }}
               />
             </foreignObject>
+            {media?.type === 'video' ? (
+              <rect {...media.region} className='scan-region' />
+            ) : null}
             {imageUrl ? (
               <image
                 href={imageUrl}
@@ -155,22 +170,15 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
                 height={scanState.height}
               />
             ) : null}
-            {scanState.type === 'result' ? (
+            {outlinePath ? (
               <>
-                <path
-                  d={`M 0 0 H ${scanState.width} V ${
-                    scanState.height
-                  } H 0 z ${scanState.cornerPoints
-                    .map(({ x, y }, i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
-                    .join('')}z`}
-                  className='shadow'
-                />
-                <path
-                  d={`${scanState.cornerPoints
-                    .map(({ x, y }, i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
-                    .join('')}z`}
-                  className='shadow-outline'
-                />
+                {media?.type === 'image' ? (
+                  <path
+                    d={`M 0 0 H ${scanState.width} V ${scanState.height} H 0 z ${outlinePath}`}
+                    className='shadow'
+                  />
+                ) : null}
+                <path d={outlinePath} className='shadow-outline' />
               </>
             ) : null}
           </svg>
