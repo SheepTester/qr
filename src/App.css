@@ -43,7 +43,7 @@ button:not(:disabled) {
 }
 .welcome {
   flex-direction: row;
-  @media (max-width: 600px) {
+  @media (max-width: 950px) {
     flex-direction: column;
   }
 }
@@ -70,8 +70,9 @@ button:not(:disabled) {
 }
 .heading {
   font-weight: normal;
-  font-size: normal;
+  font-size: 1.5em;
   margin: 0;
+  margin-bottom: 20px;
 }
 .tabs {
   display: flex;
@@ -115,6 +116,10 @@ button:not(:disabled) {
   overflow: hidden;
   .welcome & {
     margin: 0 40px;
+    height: 65px;
+    & textarea {
+      overflow: hidden;
+    }
   }
 }
 .qr-text,
@@ -146,12 +151,32 @@ button:not(:disabled) {
   background-color: #030712;
   color: #f3f4f6;
 }
+.choose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 65px;
+  gap: 10px;
+  @media (max-width: 950px) {
+    flex-direction: column;
+  }
+}
+.or-scan-option {
+  color: #9ca3af;
+}
 .choose-file {
   color: #f43f5e;
   cursor: pointer;
   &:hover {
     text-decoration: underline;
   }
+}
+.scan-btn {
+  background-color: #f43f5e;
+  color: #030712;
+  padding: 10px 15px;
+  border-radius: 5px;
+  margin: 6px 3px;
 }
 .height-constraint {
   height: 0;

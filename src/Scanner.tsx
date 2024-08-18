@@ -121,24 +121,42 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       style={{ display: hidden ? 'none' : '' }}
     >
       {welcome ? <h2 className='heading'>Scan a QR code</h2> : null}
-      <label>
-        Paste, drag, or <span className='choose-file'>choose an image</span>
-        <input
-          type='file'
-          accept='image/*'
-          className='visually-hidden'
-          onChange={e => {
-            const file = e.currentTarget.files?.[0]
-            if (file) {
-              handleImage(file)
-            }
-          }}
-        />
-      </label>
-      <button onClick={handleStartScan}>Scan with camera</button>
+      <div className='choose'>
+        <label>
+          Paste, drag, or <span className='choose-file'>choose an image</span>
+          <input
+            type='file'
+            accept='image/*'
+            className='visually-hidden'
+            onChange={e => {
+              const file = e.currentTarget.files?.[0]
+              if (file) {
+                handleImage(file)
+              }
+            }}
+          />
+        </label>
+        <span className='or-scan-option'>or</span>
+        {media?.type === 'video' ? (
+          <button
+            className='scan-btn'
+            onClick={() => {
+              scannerRef.current?.stop()
+              setMedia(null)
+              setScanState({ type: 'awaiting-image', width: 0, height: 0 })
+            }}
+          >
+            Stop scanning
+          </button>
+        ) : (
+          <button className='scan-btn' onClick={handleStartScan}>
+            Scan with camera
+          </button>
+        )}
+      </div>
       <div
         className='height-constraint'
-        style={{ display: welcome ? 'none' : '' }}
+        style={{ display: media ? '' : 'none' }}
       >
         <div
           className='width-constraint'

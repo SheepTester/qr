@@ -19,7 +19,7 @@ I plan to have the following features:
   - [ ] drop image
   - [x] select image
   - [x] turn on camera
-  - [ ] flip camera
+  - [x] flip camera
   - [ ] select camera
   - [ ] option to auto open URL
   - [ ] result history
