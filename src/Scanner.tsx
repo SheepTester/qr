@@ -1,4 +1,4 @@
-import QrScanner from 'qr-scanner'
+import QrScanner from './lib/qr-scanner'
 import { useEffect, useRef, useState } from 'react'
 import { useObjectUrl } from './lib/useObjectUrl'
 
