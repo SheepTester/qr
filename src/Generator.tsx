@@ -77,7 +77,11 @@ export function Generator ({
         />
       ) : null}
       {!welcome ? (
-        <div className='generate-btns-wrapper'>
+        <div
+          className={`generate-btns-wrapper ${
+            text === '' ? 'generate-btns-empty' : ''
+          }`}
+        >
           <div className='generate-btns'>
             <button
               className='generate-btn'

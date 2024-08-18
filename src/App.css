@@ -152,6 +152,10 @@ button:not(:disabled) {
 .generate-btns-wrapper {
   position: relative;
   text-align: left;
+  transition: opacity 0.2s;
+}
+.generate-btns-empty {
+  opacity: 0;
 }
 .generate-btns {
   position: absolute;
