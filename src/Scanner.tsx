@@ -3,12 +3,21 @@ import { useEffect, useRef, useState } from 'react'
 import { useObjectUrl } from './lib/useObjectUrl'
 
 type ScanState =
-  | { type: 'awaiting-image' | 'scanning' | 'no-result' }
+  | { type: 'awaiting-image' }
+  | {
+      type: 'scanning' | 'no-result'
+      width: number
+      height: number
+    }
   | (QrScanner.ScanResult & {
       type: 'result'
       width: number
       height: number
     })
+type Camera = {
+  width: number
+  height: number
+}
 
 export type ScannerProps = {
   welcome: boolean
@@ -21,15 +30,23 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
   const [scanState, setScanState] = useState<ScanState>({
     type: 'awaiting-image'
   })
-  const video = useRef<HTMLVideoElement | null>(null)
-  const [usingCamera, setUsingCamera] = useState(false)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const scannerRef = useRef<QrScanner | null>(null)
+  const [usingCamera, setUsingCamera] = useState<Camera | null>(null)
 
   async function handleImage (blob: Blob): Promise<void> {
     onUse()
+    const bitmap = await createImageBitmap(blob)
     setImage(blob)
-    setScanState({ type: 'scanning' })
+    setScanState({
+      type: 'scanning',
+      width: bitmap.width,
+      height: bitmap.height
+    })
+    setUsingCamera(null)
+    scannerRef.current?.stop()
+    scannerRef.current = null
     try {
-      const bitmap = await createImageBitmap(blob)
       const result = await QrScanner.scanImage(bitmap, {
         returnDetailedScanResult: true
       })
@@ -40,8 +57,13 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
         height: bitmap.height
       })
       bitmap.close()
-    } catch {
-      setScanState({ type: 'no-result' })
+    } catch (error) {
+      console.error(error)
+      setScanState({
+        type: 'no-result',
+        width: bitmap.width,
+        height: bitmap.height
+      })
     }
   }
 
@@ -82,51 +104,76 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       </label>
       <button
         onClick={() => {
-          if (video.current) {
-            const scanner = new QrScanner(video.current, console.log, {
+          const video = videoRef.current
+          if (video) {
+            scannerRef.current = new QrScanner(video, console.log, {
               returnDetailedScanResult: true
             })
-            scanner.start()
-            console.log(scanner)
-            setUsingCamera(true)
+            scannerRef.current.start().then(() => {
+              console.log(video.videoWidth)
+              setUsingCamera({
+                width: video.videoWidth,
+                height: video.videoHeight
+              })
+              onUse()
+            })
+            console.log(scannerRef.current)
           }
         }}
       >
         Scan with camera
       </button>
-      <video ref={video} style={{ display: usingCamera ? '' : 'none' }} />
-      {imageUrl ? (
-        scanState.type === 'result' ? (
-          <svg
-            width={scanState.width}
-            height={scanState.height}
-            viewBox={`0 0 ${scanState.width} ${scanState.height}`}
+      <div
+        className='height-constraint'
+        style={{ display: welcome ? 'none' : '' }}
+      >
+        <div
+          className='width-constraint'
+          style={{
+            aspectRatio: usingCamera
+              ? `${usingCamera.width} / ${usingCamera.height}`
+              : scanState.type !== 'awaiting-image'
+              ? `${scanState.width} / ${scanState.height}`
+              : ''
+          }}
+        >
+          <video
+            ref={videoRef}
             className='selected-image'
-          >
-            <image
-              href={imageUrl}
-              width={scanState.width}
-              height={scanState.height}
-            />
-            <path
-              d={`M 0 0 H ${scanState.width} V ${
-                scanState.height
-              } H 0 z ${scanState.cornerPoints
-                .map(({ x, y }, i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
-                .join('')}z`}
-              className='shadow'
-            />
-            <path
-              d={`${scanState.cornerPoints
-                .map(({ x, y }, i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
-                .join('')}z`}
-              className='shadow-outline'
-            />
-          </svg>
-        ) : (
-          <img src={imageUrl} alt='Selected image' className='selected-image' />
-        )
-      ) : null}
+            style={{ display: usingCamera ? '' : 'none' }}
+          />
+          {imageUrl && !usingCamera && scanState.type !== 'awaiting-image' ? (
+            <svg
+              className='selected-image'
+              viewBox={`0 0 ${scanState.width} ${scanState.height}`}
+            >
+              <image
+                href={imageUrl}
+                width={scanState.width}
+                height={scanState.height}
+              />
+              {scanState.type === 'result' ? (
+                <>
+                  <path
+                    d={`M 0 0 H ${scanState.width} V ${
+                      scanState.height
+                    } H 0 z ${scanState.cornerPoints
+                      .map(({ x, y }, i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
+                      .join('')}z`}
+                    className='shadow'
+                  />
+                  <path
+                    d={`${scanState.cornerPoints
+                      .map(({ x, y }, i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
+                      .join('')}z`}
+                    className='shadow-outline'
+                  />
+                </>
+              ) : null}
+            </svg>
+          ) : null}
+        </div>
+      </div>
       <div>
         {scanState.type === 'scanning'
           ? 'Loading...'
