@@ -3,17 +3,13 @@ import { useEffect, useRef, useState } from 'react'
 import { useObjectUrl } from './lib/useObjectUrl'
 
 type ScanState =
-  | { type: 'awaiting-image' }
   | {
-      type: 'scanning' | 'no-result'
       width: number
       height: number
-    }
-  | (QrScanner.ScanResult & {
-      type: 'result'
-      width: number
-      height: number
-    })
+    } & (
+      | { type: 'awaiting-image' | 'scanning' | 'no-result' }
+      | ({ type: 'result' } & QrScanner.ScanResult)
+    )
 type Camera = {
   width: number
   height: number
@@ -25,14 +21,15 @@ export type ScannerProps = {
   onUse: () => void
 }
 export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
-  const [image, setImage] = useState<Blob | null>(null)
-  const imageUrl = useObjectUrl(image)
+  const [image, setImage] = useState<Blob | 'video' | null>(null)
+  const imageUrl = useObjectUrl(image === 'video' ? null : image)
   const [scanState, setScanState] = useState<ScanState>({
-    type: 'awaiting-image'
+    type: 'awaiting-image',
+    width: 0,
+    height: 0
   })
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const scannerRef = useRef<QrScanner | null>(null)
-  const [usingCamera, setUsingCamera] = useState<Camera | null>(null)
 
   async function handleImage (blob: Blob): Promise<void> {
     onUse()
@@ -43,9 +40,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       width: bitmap.width,
       height: bitmap.height
     })
-    setUsingCamera(null)
     scannerRef.current?.stop()
-    scannerRef.current = null
     try {
       const result = await QrScanner.scanImage(bitmap, {
         returnDetailedScanResult: true
@@ -65,6 +60,32 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
         height: bitmap.height
       })
     }
+  }
+
+  function handleResult (result: QrScanner.ScanResult): void {
+    setScanState(scanState => ({
+      ...scanState,
+      ...result,
+      type: 'result'
+    }))
+  }
+
+  async function handleStartScan (): Promise<void> {
+    const video = videoRef.current
+    if (!video) {
+      return
+    }
+    scannerRef.current ??= new QrScanner(video, handleResult, {
+      returnDetailedScanResult: true
+    })
+    await scannerRef.current.start()
+    setScanState({
+      type: 'scanning',
+      width: video.videoWidth,
+      height: video.videoHeight
+    })
+    setImage('video')
+    onUse()
   }
 
   useEffect(() => {
@@ -102,76 +123,57 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
           }}
         />
       </label>
-      <button
-        onClick={() => {
-          const video = videoRef.current
-          if (video) {
-            scannerRef.current = new QrScanner(video, console.log, {
-              returnDetailedScanResult: true
-            })
-            scannerRef.current.start().then(() => {
-              console.log(video.videoWidth)
-              setUsingCamera({
-                width: video.videoWidth,
-                height: video.videoHeight
-              })
-              onUse()
-            })
-            console.log(scannerRef.current)
-          }
-        }}
-      >
-        Scan with camera
-      </button>
+      <button onClick={handleStartScan}>Scan with camera</button>
       <div
         className='height-constraint'
         style={{ display: welcome ? 'none' : '' }}
       >
         <div
           className='width-constraint'
-          style={{
-            aspectRatio: usingCamera
-              ? `${usingCamera.width} / ${usingCamera.height}`
-              : scanState.type !== 'awaiting-image'
-              ? `${scanState.width} / ${scanState.height}`
-              : ''
-          }}
+          style={{ aspectRatio: `${scanState.width} / ${scanState.height}` }}
         >
-          <video
-            ref={videoRef}
+          <svg
             className='selected-image'
-            style={{ display: usingCamera ? '' : 'none' }}
-          />
-          {imageUrl && !usingCamera && scanState.type !== 'awaiting-image' ? (
-            <svg
-              className='selected-image'
-              viewBox={`0 0 ${scanState.width} ${scanState.height}`}
+            viewBox={`0 0 ${scanState.width} ${scanState.height}`}
+          >
+            <foreignObject
+              x={0}
+              y={0}
+              width={scanState.width}
+              height={scanState.height}
             >
+              <video
+                ref={videoRef}
+                className='selected-image'
+                style={{ display: image === 'video' ? '' : 'none' }}
+              />
+            </foreignObject>
+            {imageUrl ? (
               <image
                 href={imageUrl}
                 width={scanState.width}
                 height={scanState.height}
               />
-              {scanState.type === 'result' ? (
-                <>
-                  <path
-                    d={`M 0 0 H ${scanState.width} V ${
-                      scanState.height
-                    } H 0 z ${scanState.cornerPoints
-                      .map(({ x, y }, i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
-                      .join('')}z`}
-                    className='shadow'
-                  />
-                  <path
-                    d={`${scanState.cornerPoints
-                      .map(({ x, y }, i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
-                      .join('')}z`}
-                    className='shadow-outline'
-                  />
-                </>
-              ) : null}
-            </svg>
-          ) : null}
+            ) : null}
+            {scanState.type === 'result' ? (
+              <>
+                <path
+                  d={`M 0 0 H ${scanState.width} V ${
+                    scanState.height
+                  } H 0 z ${scanState.cornerPoints
+                    .map(({ x, y }, i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
+                    .join('')}z`}
+                  className='shadow'
+                />
+                <path
+                  d={`${scanState.cornerPoints
+                    .map(({ x, y }, i) => `${i === 0 ? 'M' : 'L'} ${x} ${y}`)
+                    .join('')}z`}
+                  className='shadow-outline'
+                />
+              </>
+            ) : null}
+          </svg>
         </div>
       </div>
       <div>

@@ -104,7 +104,7 @@ class QrScanner {
   private readonly _maxScansPerSecond: number = 25
   private _lastScanTimestamp: number = -1
   private _scanRegion: QrScanner.ScanRegion
-  private _codeOutlineHighlightRemovalTimeout?: number
+  private _codeOutlineHighlightRemovalTimeout?: ReturnType<typeof setTimeout>
   private _qrEnginePromise: Promise<Worker | BarcodeDetector>
   private _active: boolean = false
   private _paused: boolean = false
@@ -306,15 +306,15 @@ class QrScanner {
 
     requestAnimationFrame(() => {
       // Checking in requestAnimationFrame which should avoid a potential additional re-flow for getComputedStyle.
-      const videoStyle = window.getComputedStyle(video)
-      if (videoStyle.display === 'none') {
-        video.style.setProperty('display', 'block', 'important')
-        shouldHideVideo = true
-      }
-      if (videoStyle.visibility !== 'visible') {
-        video.style.setProperty('visibility', 'visible', 'important')
-        shouldHideVideo = true
-      }
+      // const videoStyle = window.getComputedStyle(video)
+      // if (videoStyle.display === 'none') {
+      //   video.style.setProperty('display', 'block', 'important')
+      //   shouldHideVideo = true
+      // }
+      // if (videoStyle.visibility !== 'visible') {
+      //   video.style.setProperty('visibility', 'visible', 'important')
+      //   shouldHideVideo = true
+      // }
       if (shouldHideVideo) {
         // Hide the video in a way that doesn't cause Safari to stop the playback.
         console.warn(
@@ -671,7 +671,7 @@ class QrScanner {
           )
         }
         detailedScanResult = await new Promise((resolve, reject) => {
-          let timeout: number
+          let timeout: ReturnType<typeof setTimeout>
           let onMessage: (event: MessageEvent) => void
           let onError: (error: ErrorEvent | string) => void
           let expectedResponseId = -1
