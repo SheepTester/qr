@@ -12,7 +12,7 @@ I plan to have the following features:
 
 - [ ] Generator
   - [x] text input at bottom
-  - [ ] show ECL levels with percentages
+  - [x] show ECL levels with percentages
   - [ ] copy or download PNG and SVG
 - [ ] Scanner
   - [x] paste image
