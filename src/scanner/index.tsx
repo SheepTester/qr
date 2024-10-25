@@ -3,6 +3,7 @@ import common from '../common.module.css'
 import QrScanner from '../lib/qr-scanner'
 import { useObjectUrl } from '../lib/useObjectUrl'
 import styles from './index.module.css'
+import { Result } from './Result'
 
 type ScanState =
   | {
@@ -216,7 +217,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
           : scanState.type === 'no-result'
           ? 'No QR code found.'
           : scanState.type === 'result'
-          ? scanState.data
+          ? <Result text={scanState.data} />
           : null}
       </div>
     </div>

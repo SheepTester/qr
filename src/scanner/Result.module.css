@@ -1,0 +1,10 @@
+.result {
+  display: flex;
+}
+.text {
+  white-space: pre-wrap;
+
+  :is(a):hover {
+    text-decoration: underline;
+  }
+}

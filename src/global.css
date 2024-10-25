@@ -22,6 +22,10 @@ input {
 button:not(:disabled) {
   cursor: pointer;
 }
+a {
+  color: inherit;
+  text-decoration: none;
+}
 ::placeholder {
   color: inherit;
   opacity: 0.5;
