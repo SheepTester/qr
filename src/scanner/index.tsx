@@ -32,6 +32,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
   })
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const scannerRef = useRef<QrScanner | null>(null)
+  const [dragOver, setDragOver] = useState(false)
 
   async function handleImage (blob: Blob): Promise<void> {
     onUse()
@@ -100,22 +101,52 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
         handleImage(image)
       }
     }
+    const handleDragOver = (e: DragEvent) => {
+      if (
+        e.dataTransfer?.types.some(type => type.startsWith('image/')) ||
+        e.dataTransfer?.types.includes('Files')
+      ) {
+        e.preventDefault()
+        onUse()
+        setDragOver(true)
+      }
+    }
+    const handleDragLeave = (e: DragEvent) => {
+      setDragOver(false)
+    }
+    const handleDrop = (e: DragEvent) => {
+      const image = Array.from(e.dataTransfer?.items ?? [])
+        .find(item => item.type.startsWith('image/'))
+        ?.getAsFile()
+      if (image) {
+        e.preventDefault()
+        handleImage(image)
+      }
+      setDragOver(false)
+    }
+
     document.addEventListener('paste', handlePaste)
+    document.body.addEventListener('dragover', handleDragOver)
+    document.body.addEventListener('dragleave', handleDragLeave)
+    document.body.addEventListener('drop', handleDrop)
     return () => {
       document.removeEventListener('paste', handlePaste)
+      document.body.removeEventListener('dragover', handleDragOver)
+      document.body.removeEventListener('dragleave', handleDragLeave)
+      document.body.removeEventListener('drop', handleDrop)
     }
   }, [])
 
   const outlinePath =
     scanState.type === 'result'
       ? `${scanState.cornerPoints
-          .map(
-            ({ x, y }, i) =>
-              `${i === 0 ? 'M' : 'L'} ${
-                scanState.mirrored ? scanState.width - x : x
-              } ${y}`
-          )
-          .join('')}z`
+        .map(
+          ({ x, y }, i) =>
+            `${i === 0 ? 'M' : 'L'} ${
+              scanState.mirrored ? scanState.width - x : x
+            } ${y}`
+        )
+        .join('')}z`
       : null
 
   return (
@@ -123,6 +154,11 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       className={`${common.section} ${styles.scannerWrapper}`}
       style={{ display: hidden ? 'none' : '' }}
     >
+      <div
+        className={`${styles.dragOver} ${
+          dragOver ? '' : styles.dragOverHidden
+        }`}
+      />
       {welcome ? <h2 className={common.heading}>Scan a QR code</h2> : null}
       <div className={styles.choose}>
         <label>
@@ -212,13 +248,13 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
         </div>
       </div>
       <div>
-        {scanState.type === 'scanning'
-          ? 'Loading...'
-          : scanState.type === 'no-result'
-          ? 'No QR code found.'
-          : scanState.type === 'result'
-          ? <Result text={scanState.data} />
-          : null}
+        {scanState.type === 'scanning' ? (
+          'Loading...'
+        ) : scanState.type === 'no-result' ? (
+          'No QR code found.'
+        ) : scanState.type === 'result' ? (
+          <Result text={scanState.data} />
+        ) : null}
       </div>
     </div>
   )

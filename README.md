@@ -17,7 +17,7 @@ I plan to have the following features:
   - [ ] override mask
 - Scanner
   - [x] paste image
-  - [ ] drop image
+  - [x] drop image
   - [x] select image
   - [x] turn on camera
   - [x] flip camera

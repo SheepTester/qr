@@ -1,7 +1,24 @@
 .scannerWrapper {
   background-color: #030712;
   color: #f3f4f6;
+  position: relative;
 }
+
+.dragOver {
+  position: absolute;
+  inset: 20px;
+  border: 3px dashed #f43f5e;
+  background-color: #f43f5e33;
+  border-radius: 20px;
+  transition: visibility 0.2s, opacity 0.2s;
+  pointer-events: none;
+  z-index: 5;
+}
+.dragOverHidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
 .choose {
   display: flex;
   align-items: center;
