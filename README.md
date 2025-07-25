@@ -20,12 +20,12 @@ I plan to have the following features:
   - [x] drop image
   - [x] select image
   - [x] turn on camera
-  - [x] flip camera
+  - [ ] flip camera
   - [ ] select camera
   - [ ] option to auto open URL
   - [ ] result history
-  - [ ] copy result
-  - [ ] auto link URLs
+  - [x] copy result
+  - [x] auto link URLs
 
 ## Development
 

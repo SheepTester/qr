@@ -162,7 +162,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       {welcome ? <h2 className={common.heading}>Scan a QR code</h2> : null}
       <div className={styles.choose}>
         <label>
-          Paste, drag, or{' '}
+          Paste, drop, or{' '}
           <span className={styles.chooseFile}>choose an image</span>
           <input
             type='file'

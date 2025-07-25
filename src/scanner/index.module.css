@@ -25,7 +25,12 @@
   justify-content: center;
   min-height: 65px;
   gap: 10px;
-  @media (max-width: 950px) {
+  @media (max-width: 500px) {
+    flex-direction: column;
+  }
+}
+@media (max-width: 950px) {
+  :global(.welcome) .choose {
     flex-direction: column;
   }
 }
