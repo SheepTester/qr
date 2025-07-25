@@ -1,4 +1,10 @@
-import { create, QRCodeErrorCorrectionLevel, toCanvas, toString } from 'qrcode'
+import {
+  create,
+  QRCodeErrorCorrectionLevel,
+  QRCodeRenderersOptions,
+  toCanvas,
+  toString
+} from 'qrcode'
 import { useEffect, useRef, useState } from 'react'
 import common from '../common.module.css'
 import { download } from '../lib/download'
@@ -24,6 +30,8 @@ export function Generator ({
   const [text, setText] = useState('')
   const [ecl, setEcl] = useState<QRCodeErrorCorrectionLevel>('M')
   const [pixelSize, setPixelSize] = useState('10')
+  const [opaque, setOpaque] = useState(true)
+  const [margin, setMargin] = useState(true)
   const context = useRef<CanvasRenderingContext2D | null>(null)
 
   useEffect(() => {
@@ -53,16 +61,21 @@ export function Generator ({
     }
   }, [text, ecl])
 
-  async function getPng (): Promise<Blob> {
-    const canvas = await toCanvas(text, {
+  function getQrOptions (): QRCodeRenderersOptions {
+    return {
       errorCorrectionLevel: ecl,
       scale: +pixelSize,
       color: {
         dark: '#000',
-        // Transparent
-        light: '#0000'
-      }
-    })
+        // #0000 is transparent
+        light: opaque ? '#fff' : '#0000'
+      },
+      margin: margin ? undefined : 0
+    }
+  }
+
+  async function getPng (): Promise<Blob> {
+    const canvas = await toCanvas(text, getQrOptions())
     return new Promise((resolve, reject) =>
       canvas.toBlob(
         blob =>
@@ -75,16 +88,7 @@ export function Generator ({
   }
 
   async function getSvg (): Promise<Blob> {
-    const svg = await toString(text, {
-      type: 'svg',
-      errorCorrectionLevel: ecl,
-      scale: +pixelSize,
-      color: {
-        dark: '#000',
-        // Transparent
-        light: '#0000'
-      }
-    })
+    const svg = await toString(text, { type: 'svg', ...getQrOptions() })
     return new Blob([svg], { type: 'image/svg+xml' })
   }
 
@@ -133,6 +137,10 @@ export function Generator ({
           onEcl={setEcl}
           pixelSize={pixelSize}
           onPixelSize={setPixelSize}
+          opaque={opaque}
+          onOpaque={setOpaque}
+          margin={margin}
+          onMargin={setMargin}
         />
       ) : null}
       <QrText text={text} onText={setText} onFocus={onUse} />

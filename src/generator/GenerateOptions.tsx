@@ -20,12 +20,20 @@ export type GenerateOptionsProps = {
   onEcl: (ecl: QRCodeErrorCorrectionLevel) => void
   pixelSize: string
   onPixelSize: (pixelSize: string) => void
+  opaque: boolean
+  onOpaque: (opaque: boolean) => void
+  margin: boolean
+  onMargin: (margin: boolean) => void
 }
 export function GenerateOptions ({
   ecl,
   onEcl,
   pixelSize,
-  onPixelSize
+  onPixelSize,
+  opaque,
+  onOpaque,
+  margin,
+  onMargin
 }: GenerateOptionsProps) {
   const id = useId()
   return (
@@ -70,6 +78,36 @@ export function GenerateOptions ({
           value={pixelSize}
           onChange={e => onPixelSize(e.currentTarget.value)}
         />
+      </label>
+      <label className={styles.checkboxWrapper}>
+        <input
+          type='checkbox'
+          name='opaque'
+          className='hidden-accessible'
+          checked={opaque}
+          onChange={e => onOpaque(e.currentTarget.checked)}
+        />
+        <span
+          className={`${styles.checkbox} ${
+            opaque ? styles.checkboxChecked : ''
+          }`}
+        />
+        <span>Include white background</span>
+      </label>
+      <label className={styles.checkboxWrapper}>
+        <input
+          type='checkbox'
+          name='margin'
+          className='hidden-accessible'
+          checked={margin}
+          onChange={e => onMargin(e.currentTarget.checked)}
+        />
+        <span
+          className={`${styles.checkbox} ${
+            margin ? styles.checkboxChecked : ''
+          }`}
+        />
+        <span>Include space around QR code</span>
       </label>
     </>
   )
