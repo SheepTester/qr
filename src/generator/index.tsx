@@ -1,11 +1,12 @@
 import {
   create,
   QRCodeErrorCorrectionLevel,
+  QRCodeMaskPattern,
   QRCodeRenderersOptions,
   toCanvas,
   toString
 } from 'qrcode'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import common from '../common.module.css'
 import { download } from '../lib/download'
 import { GenerateButtons } from './GenerateButtons'
@@ -29,41 +30,53 @@ export function Generator ({
 }: GeneratorProps) {
   const [text, setText] = useState('')
   const [ecl, setEcl] = useState<QRCodeErrorCorrectionLevel>('M')
+  const [mask, setMask] = useState<QRCodeMaskPattern | null>(null)
   const [pixelSize, setPixelSize] = useState('10')
   const [opaque, setOpaque] = useState(true)
   const [margin, setMargin] = useState(true)
   const context = useRef<CanvasRenderingContext2D | null>(null)
 
+  const code = useMemo(() => {
+    try {
+      return create(text, {
+        errorCorrectionLevel: ecl,
+        maskPattern: mask ?? undefined
+      })
+    } catch {
+      return null
+    }
+  }, [text, ecl, mask])
+
   useEffect(() => {
     if (!context.current) {
       return
     }
-    try {
-      const code = create(text, { errorCorrectionLevel: ecl })
-      const image = new ImageData(
-        new Uint8ClampedArray(
-          Array.from(code.modules.data, bit =>
-            bit ? [0, 0, 0, 255] : [255, 255, 255, 0]
-          ).flat()
-        ),
-        code.modules.size
-      )
-      context.current.canvas.width = code.modules.size + QUIET_ZONE * 2
-      context.current.canvas.height = code.modules.size + QUIET_ZONE * 2
-      context.current.canvas.style.setProperty(
-        '--module-size',
-        `${code.modules.size}`
-      )
-      context.current.putImageData(image, QUIET_ZONE, QUIET_ZONE)
-    } catch {
+    if (!code) {
       context.current.canvas.width = 0
       context.current.canvas.height = 0
+      return
     }
-  }, [text, ecl])
+    const image = new ImageData(
+      new Uint8ClampedArray(
+        Array.from(code.modules.data, bit =>
+          bit ? [0, 0, 0, 255] : [255, 255, 255, 0]
+        ).flat()
+      ),
+      code.modules.size
+    )
+    context.current.canvas.width = code.modules.size + QUIET_ZONE * 2
+    context.current.canvas.height = code.modules.size + QUIET_ZONE * 2
+    context.current.canvas.style.setProperty(
+      '--module-size',
+      `${code.modules.size}`
+    )
+    context.current.putImageData(image, QUIET_ZONE, QUIET_ZONE)
+  }, [code])
 
   function getQrOptions (): QRCodeRenderersOptions {
     return {
       errorCorrectionLevel: ecl,
+      maskPattern: mask ?? undefined,
       scale: +pixelSize,
       color: {
         dark: '#000',
@@ -135,6 +148,9 @@ export function Generator ({
           hidden={text === ''}
           ecl={ecl}
           onEcl={setEcl}
+          actualMask={code?.maskPattern}
+          mask={mask}
+          onMask={setMask}
           pixelSize={pixelSize}
           onPixelSize={setPixelSize}
           opaque={opaque}

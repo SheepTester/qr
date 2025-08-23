@@ -14,7 +14,7 @@ I plan to have the following features:
   - [x] text input at bottom
   - [x] show ECL levels with percentages
   - [x] copy or download PNG and SVG
-  - [ ] override mask
+  - [x] override mask
 - Scanner
   - [x] paste image
   - [x] drop image

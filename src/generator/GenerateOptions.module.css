@@ -13,11 +13,23 @@
   white-space: nowrap;
 }
 .buttonGroup {
+  flex: auto;
   border: 1px solid #e5e7eb;
   border-radius: 5px;
   overflow: hidden;
-  flex: none;
   display: grid;
+}
+.option {
+  cursor: pointer;
+  &:not(.selected):hover {
+    background-color: #f9fafb;
+  }
+}
+.selected {
+  background-color: #f43f5e;
+  color: white;
+}
+.eclButtonGroup {
   grid-template-columns: repeat(4, 1fr);
 }
 .ecl {
@@ -28,14 +40,6 @@
   grid-template-areas:
     'letter percent'
     'name name';
-  cursor: pointer;
-  &:not(.eclSelected):hover {
-    background-color: #f9fafb;
-  }
-}
-.eclSelected {
-  background-color: #f43f5e;
-  color: white;
 }
 .eclLetter {
   font-weight: bold;
@@ -47,6 +51,34 @@
 }
 .eclPercent {
   grid-area: percent;
+}
+.maskButtonGroup {
+  grid-template-columns: auto repeat(8, 1fr);
+}
+.maskOption {
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  position: relative;
+  overflow: hidden;
+}
+.maskAuto {
+  padding: 5px 10px;
+}
+.mask {
+  stroke: currentColor;
+  border: 1px solid currentColor;
+  aspect-ratio: 1 / 1;
+}
+.inUse {
+  background-color: #f43f5e;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  margin: -4px;
 }
 .input {
   height: 40px;
