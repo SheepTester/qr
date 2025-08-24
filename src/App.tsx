@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import styles from './App.module.css'
 import { Generator } from './generator'
 import './global.css'
@@ -9,6 +9,16 @@ type Tab = 'welcome' | 'scan' | 'generate'
 export function App () {
   const [tab, setTab] = useState<Tab>('welcome')
   const [keyboardVisible, setKeyboardVisible] = useState(false)
+
+  useEffect(() => {
+    if (tab !== 'welcome') {
+      document.body.classList.add('hide-sheep')
+    }
+    return () => {
+      document.body.classList.remove('hide-sheep')
+    }
+  }, [tab])
+
   return (
     <main className={`${styles.main} ${tab === 'welcome' ? 'welcome' : ''}`}>
       {tab !== 'welcome' && !keyboardVisible ? (

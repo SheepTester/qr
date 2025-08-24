@@ -40,3 +40,9 @@ a {
   white-space: nowrap;
   width: 1px;
 }
+
+.hide-sheep sheep-btn {
+  opacity: 0;
+  visibility: hidden;
+  transition: 0.5s;
+}
