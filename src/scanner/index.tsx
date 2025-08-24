@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import * as Icon from 'react-feather'
 import common from '../common.module.css'
 import QrScanner from '../lib/qr-scanner'
 import { useObjectUrl } from '../lib/useObjectUrl'
@@ -32,7 +33,21 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
   })
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const scannerRef = useRef<QrScanner | null>(null)
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([])
+  const [preferredCamera, setPreferredCamera] = useState('environment')
   const [dragOver, setDragOver] = useState(false)
+
+  useEffect(() => {
+    navigator.mediaDevices
+      .enumerateDevices()
+      .then(devices =>
+        setDevices(
+          devices.filter(
+            device => device.deviceId && device.kind === 'videoinput'
+          )
+        )
+      )
+  }, [])
 
   async function handleImage (blob: Blob): Promise<void> {
     onUse()
@@ -80,7 +95,8 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       return
     }
     scannerRef.current ??= new QrScanner(video, handleResult, {
-      returnDetailedScanResult: true
+      returnDetailedScanResult: true,
+      preferredCamera
     })
     await scannerRef.current.start()
     setScanState({
@@ -90,6 +106,11 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
     })
     setMedia({ type: 'video', region: scannerRef.current.scanRegion })
     onUse()
+    setDevices(
+      (await navigator.mediaDevices.enumerateDevices()).filter(
+        device => device.deviceId && device.kind === 'videoinput'
+      )
+    )
   }
 
   useEffect(() => {
@@ -160,8 +181,12 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
         }`}
       />
       {welcome ? <h2 className={common.heading}>Scan a QR code</h2> : null}
-      <div className={styles.choose}>
-        <label>
+      <div
+        className={`${styles.choose} ${
+          media?.type === 'video' ? styles.scanning : ''
+        }`}
+      >
+        <label className={styles.chooseFileLabel}>
           Paste, drop, or{' '}
           <span className={styles.chooseFile}>choose an image</span>
           <input
@@ -189,10 +214,48 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
             Stop scanning
           </button>
         ) : (
-          <button className={styles.scanBtn} onClick={handleStartScan}>
+          <button className={styles.scanBtn} onClick={() => handleStartScan()}>
             Scan with camera
           </button>
         )}
+        {media?.type === 'video' ? (
+          <div className={styles.selectCameraWrapper}>
+            <Icon.Camera />
+            <Icon.ChevronDown />
+            <select
+              className={styles.selectCamera}
+              aria-label='Camera'
+              name='camera'
+              value={preferredCamera}
+              onChange={async e => {
+                setPreferredCamera(e.currentTarget.value)
+                const scanner = scannerRef.current
+                const video = videoRef.current
+                if (scanner && video) {
+                  console.log(e.currentTarget.value)
+                  await scanner.setCamera(e.currentTarget.value)
+                  setScanState({
+                    type: 'scanning',
+                    width: video.videoWidth,
+                    height: video.videoHeight
+                  })
+                  setMedia({
+                    type: 'video',
+                    region: scanner.scanRegion
+                  })
+                }
+              }}
+            >
+              <option value='user'>Front camera</option>
+              <option value='environment'>Back camera</option>
+              {devices.map(({ deviceId, label }) => (
+                <option key={deviceId} value={deviceId}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : null}
       </div>
       <div
         className={styles.heightConstraint}

@@ -2,6 +2,7 @@
   background-color: #030712;
   color: #f3f4f6;
   position: relative;
+  color-scheme: dark;
 }
 
 .dragOver {
@@ -25,8 +26,24 @@
   justify-content: center;
   min-height: 65px;
   gap: 10px;
-  @media (max-width: 500px) {
+  padding: 0 15px;
+}
+@media (max-width: 530px) {
+  .choose {
+    padding: 0 10px;
     flex-direction: column;
+  }
+  .scanning {
+    flex-direction: row;
+  }
+  .scanning {
+    & .orScanOption,
+    & .chooseFileLabel {
+      display: none;
+    }
+  }
+  .scanning .scanBtn {
+    margin: 0;
   }
 }
 @media (max-width: 950px) {
@@ -46,13 +63,40 @@
 }
 .scanBtn {
   background-color: #f43f5e;
-  color: #030712;
-  padding: 10px 15px;
+  color: white;
+  padding: 0 15px;
+  height: 40px;
+  display: flex;
+  align-items: center;
   border-radius: 5px;
   margin: 6px 3px;
   &:hover {
     background-color: #e11d48;
   }
+}
+.selectCameraWrapper {
+  margin-left: auto;
+  position: relative;
+  cursor: pointer;
+  border: 1px solid #9ca3af;
+  border-radius: 5px;
+  display: flex;
+  gap: 10px;
+  padding-left: 15px;
+  padding-right: 10px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+}
+.selectCamera {
+  margin: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
 }
 .heightConstraint {
   height: 0;

@@ -15,13 +15,14 @@ I plan to have the following features:
   - [x] show ECL levels with percentages
   - [x] copy or download PNG and SVG
   - [x] override mask
+  - [ ] upload any file
 - Scanner
   - [x] paste image
   - [x] drop image
   - [x] select image
   - [x] turn on camera
-  - [ ] flip camera
-  - [ ] select camera
+  - [x] flip camera
+  - [x] select camera
   - [ ] option to auto open URL
   - [ ] result history
   - [x] copy result

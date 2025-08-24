@@ -42,8 +42,20 @@ export function Generator ({
         errorCorrectionLevel: ecl,
         maskPattern: mask ?? undefined
       })
-    } catch {
-      return null
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message === 'No input text') {
+          return { error: 'empty' } as const
+        }
+        if (
+          error.message ===
+          'The amount of data is too big to be stored in a QR Code'
+        ) {
+          return { error: 'too-big' } as const
+        }
+      }
+      console.error('Unknown QR code creation error', error)
+      return { error: 'unknown' } as const
     }
   }, [text, ecl, mask])
 
@@ -51,7 +63,7 @@ export function Generator ({
     if (!context.current) {
       return
     }
-    if (!code) {
+    if ('error' in code) {
       context.current.canvas.width = 0
       context.current.canvas.height = 0
       return
@@ -132,10 +144,18 @@ export function Generator ({
     >
       {welcome ? <h2 className={common.heading}>Generate a QR code</h2> : null}
       {!welcome ? (
-        <canvas
-          className={styles.generatedQr}
-          ref={canvas => (context.current = canvas?.getContext('2d') ?? null)}
-        />
+        'error' in code && code.error === 'too-big' ? (
+          <div className={styles.error}>
+            QR codes can't hold that much data!
+          </div>
+        ) : 'error' in code && code.error === 'unknown' ? (
+          <div className={styles.error}>An error occurred.</div>
+        ) : (
+          <canvas
+            className={styles.generatedQr}
+            ref={canvas => (context.current = canvas?.getContext('2d') ?? null)}
+          />
+        )
       ) : null}
       {!welcome ? (
         <GenerateButtons
@@ -148,7 +168,7 @@ export function Generator ({
           hidden={text === ''}
           ecl={ecl}
           onEcl={setEcl}
-          actualMask={code?.maskPattern}
+          actualMask={'maskPattern' in code ? code.maskPattern : undefined}
           mask={mask}
           onMask={setMask}
           pixelSize={pixelSize}

@@ -752,10 +752,10 @@ class QrScanner {
           const lengthValue = parseFloat(length)
           return length.endsWith('%')
             ? ((!i
-                ? elementWidth - videoScaledWidth
-                : elementHeight - videoScaledHeight) *
-                lengthValue) /
-                100
+              ? elementWidth - videoScaledWidth
+              : elementHeight - videoScaledHeight) *
+              lengthValue) /
+              100
             : lengthValue
         })
 
@@ -824,7 +824,7 @@ class QrScanner {
     const requestFrame =
       'requestVideoFrameCallback' in this.$video
         ? // @ts-ignore
-          this.$video.requestVideoFrameCallback.bind(this.$video)
+        this.$video.requestVideoFrameCallback.bind(this.$video)
         : requestAnimationFrame
     requestFrame(async () => {
       if (this.$video.readyState <= 1) {
@@ -952,8 +952,8 @@ class QrScanner {
           (constraints.facingMode
             ? (this._preferredCamera as QrScanner.FacingMode) // a facing mode we were able to fulfill
             : this._preferredCamera === 'environment'
-            ? 'user' // switch as _preferredCamera was environment but we are not able to fulfill it
-            : 'environment') // switch from unfulfilled user facingMode or default to environment
+              ? 'user' // switch as _preferredCamera was environment but we are not able to fulfill it
+              : 'environment') // switch from unfulfilled user facingMode or default to environment
         return { stream, facingMode }
       } catch (e) {}
     }
@@ -992,8 +992,8 @@ class QrScanner {
     return /rear|back|environment/i.test(videoTrack.label)
       ? 'environment'
       : /front|user|face/i.test(videoTrack.label)
-      ? 'user'
-      : null // unknown
+        ? 'user'
+        : null // unknown
   }
 
   private static _drawToCanvas (

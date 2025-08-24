@@ -14,3 +14,10 @@
     padding: 60px 0;
   }
 }
+.error {
+  flex: auto;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
