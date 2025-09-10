@@ -1,8 +1,9 @@
 {
+  "type": "module",
   "scripts": {
-    "build": "cp -a static/. dist/ && tcm -p 'src/**/*.module.css' && esbuild --bundle src/index.tsx --loader:.svg=file --outdir=dist --supported:nesting=false --minify && find dist/ -type f | sed 's/dist\\//https:\\/\\/sheeptester.github.io\\/qr\\//' > dist/sitemap.txt",
+    "build": "node script/build.ts && find dist/ -type f | sed 's/dist\\//https:\\/\\/sheeptester.github.io\\/qr\\//' > dist/sitemap.txt",
     "clean": "rm -rf dist/",
-    "dev": "tcm -p 'src/**/*.module.css' -w & esbuild --bundle src/index.tsx --loader:.svg=file --outdir=static --servedir=static --sourcemap"
+    "dev": "tcm -p 'src/**/*.module.css' -w & node script/build.ts dev"
   },
   "dependencies": {
     "qr-scanner": "^1.4.2",

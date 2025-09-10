@@ -225,7 +225,6 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
             <select
               className={styles.selectCamera}
               aria-label='Camera'
-              name='camera'
               value={preferredCamera}
               onChange={async e => {
                 setPreferredCamera(e.currentTarget.value)
