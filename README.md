@@ -30,6 +30,8 @@ I plan to have the following features:
 
 ## Development
 
+Requires Node 24+
+
 ```shell
 # Install dependencies
 $ yarn
