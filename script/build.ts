@@ -11,7 +11,6 @@ const context = await esbuild.context({
   outdir: devMode ? 'static/' : 'dist/',
   sourcemap: devMode,
   minify: !devMode,
-  format: 'esm',
   supported: { nesting: !devMode },
   define: {
     DEV_MODE: String(devMode)
@@ -21,6 +20,7 @@ const context = await esbuild.context({
 if (devMode) {
   const { host, port } = await context.serve({ servedir: 'static/' })
   console.log(`http://${host}:${port}/`)
+  console.log(`http://${host}:${port}/peer/`)
 } else {
   await context.rebuild()
   await context.dispose()
