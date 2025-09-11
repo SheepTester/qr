@@ -42,7 +42,7 @@ if (devMode) {
       minify: true
     })
     // @ts-ignore Won't exist until built
-    await import(`./build-react.js?_=${entry}`)
+    await import(`./build.js?_=${entry}`)
     // CSS module class name mangling might not be guaranteed to be consistent
     const { stdout, stderr } = await new Promise<{
       stdout: string
