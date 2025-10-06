@@ -10,6 +10,11 @@
   gap: 10px;
   @media (max-width: 950px) {
     flex-direction: column;
+    gap: 0;
+    padding: 10px 0;
+    :global(.welcome) & {
+      gap: 10px;
+    }
   }
 }
 .orScanOption {
@@ -68,7 +73,6 @@
   stroke: #f43f5e;
   stroke-width: 2;
   stroke-linejoin: round;
-  vector-effect: non-scaling-stroke;
 }
 .scanRegion {
   fill: none;
@@ -76,4 +80,5 @@
   stroke-width: 2;
   stroke-linejoin: round;
   rx: 10;
+  vector-effect: non-scaling-stroke;
 }

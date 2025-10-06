@@ -31,6 +31,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
   })
   const videoRef = useRef<HTMLVideoElement | null>(null)
   const scannerRef = useRef<QrScanner | null>(null)
+  const [dragOver, setDragOver] = useState(false)
 
   async function handleImage (blob: Blob): Promise<void> {
     onUse()
@@ -121,6 +122,12 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
     <div
       className={`${common.section} ${styles.scannerWrapper}`}
       style={{ display: hidden ? 'none' : '' }}
+      onDragOver={e => {
+        e.dataTransfer.dropEffect = 'copy'
+        setDragOver(true)
+        e.preventDefault()
+      }}
+      onDragLeave={() => setDragOver(false)}
     >
       {welcome ? <h2 className={common.heading}>Scan a QR code</h2> : null}
       <div className={styles.choose}>
@@ -192,6 +199,8 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
             {imageUrl ? (
               <image
                 href={imageUrl}
+                x={0}
+                y={0}
                 width={scanState.width}
                 height={scanState.height}
               />

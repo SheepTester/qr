@@ -1,5 +1,5 @@
 /**
- * @license
+ * @license qr-scanner.ts
  * MIT License
  *
  * Copyright (c) 2017 Nimiq, danimoh
