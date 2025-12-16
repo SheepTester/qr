@@ -208,7 +208,9 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
             onClick={() => {
               scannerRef.current?.stop()
               setMedia(null)
-              setScanState({ type: 'awaiting-image', width: 0, height: 0 })
+              if (scanState.type === 'scanning') {
+                setScanState({ type: 'awaiting-image', width: 0, height: 0 })
+              }
             }}
           >
             Stop scanning
