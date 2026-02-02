@@ -12,9 +12,7 @@ import { download } from '../lib/download'
 import { GenerateButtons } from './GenerateButtons'
 import styles from './index.module.css'
 import { QrText } from './QrText'
-
-/** Modules (pixels) of quiet zone (whitespace) around the QR code */
-const QUIET_ZONE = 4
+import { QUIET_ZONE } from '../lib/constants'
 
 export type GeneratorProps = {
   welcome: boolean
@@ -78,10 +76,6 @@ export function Generator ({
     )
     context.current.canvas.width = code.modules.size + QUIET_ZONE * 2
     context.current.canvas.height = code.modules.size + QUIET_ZONE * 2
-    context.current.canvas.style.setProperty(
-      '--module-size',
-      `${code.modules.size}`
-    )
     context.current.putImageData(image, QUIET_ZONE, QUIET_ZONE)
   }, [code])
 

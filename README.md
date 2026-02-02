@@ -23,8 +23,8 @@ I plan to have the following features:
   - [x] turn on camera
   - [x] flip camera
   - [x] select camera
-  - [ ] option to auto open URL
-  - [ ] result history
+  - [ ] ~~option to auto open URL~~
+  - [ ] ~~result history~~
   - [x] copy result
   - [x] auto link URLs
 

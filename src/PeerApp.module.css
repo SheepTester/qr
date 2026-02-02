@@ -1,0 +1,26 @@
+.qrWrapper {
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid red;
+}
+.horizontalSquarer {
+  border: 1px solid green;
+  aspect-ratio: 1 / 1;
+  flex: auto;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+}
+.verticalSquarer {
+  aspect-ratio: 1 / 1;
+  flex: auto;
+  border: 1px solid blue;
+  background-color: #0082;
+}
+.generatedQr {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  width: 100%;
+}
