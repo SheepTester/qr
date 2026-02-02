@@ -49,15 +49,18 @@ if (devMode) {
       stderr: string
     }>((resolve, reject) => {
       exec(`diff script/build.css ${cssPath}`, (err, stdout, stderr) => {
-        if (err) {
+        if (err && err.code !== 1) {
           reject(err)
-        } else {
-          resolve({ stdout, stderr })
+          return
         }
+        resolve({ stdout, stderr })
       })
     })
     if (stdout || stderr) {
-      console.log({ stdout, stderr })
+      console.warn('[stdout]')
+      console.warn(stdout)
+      console.warn('[stderr]')
+      console.warn(stderr)
     }
   }
 }
