@@ -21,6 +21,19 @@ export function PeerApp () {
   const [y, setY] = useState(0.5)
   const dragStateRef = useRef<DragState | null>(null)
   const context = useRef<CanvasRenderingContext2D | null>(null)
+  const [text, setText] = useState('hello')
+
+  useEffect(() => {
+    let frameId = 0
+    const frame = () => {
+      setText(String(Math.floor(Date.now() / 1000)))
+      frameId = window.requestAnimationFrame(frame)
+    }
+    frame()
+    return () => {
+      window.cancelAnimationFrame(frameId)
+    }
+  }, [])
 
   const handlePointerEnd = (e: PointerEvent) => {
     if (dragStateRef.current?.pointerId === e.pointerId) {
@@ -29,7 +42,6 @@ export function PeerApp () {
   }
 
   // TODO: Make this a shared hook/component
-  const text = 'hello'
   const code = useMemo(() => {
     try {
       return create(text, { errorCorrectionLevel: 'low' })
