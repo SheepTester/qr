@@ -11,7 +11,7 @@ import { download } from '../lib/download'
 import { GenerateButtons } from './GenerateButtons'
 import styles from './index.module.css'
 import { QrText } from './QrText'
-import { useQr, UseQrOptions } from '../lib/useQr'
+import { useQr, UseQrOptions } from './useQr'
 
 export type GeneratorProps = {
   welcome: boolean

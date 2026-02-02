@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import * as Icon from 'react-feather'
 import common from '../common.module.css'
-import QrScanner from '../lib/qr-scanner'
+import QrScanner from './qr-scanner'
 import { useObjectUrl } from '../lib/useObjectUrl'
 import styles from './index.module.css'
 import { Result } from './Result'

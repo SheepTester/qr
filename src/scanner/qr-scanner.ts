@@ -614,7 +614,7 @@ class QrScanner {
       (
         import(
           // @ts-ignore no types defined for import
-          '../../node_modules/qr-scanner/qr-scanner-worker.min.js'
+          'qr-scanner/qr-scanner-worker.min.js'
         ) as Promise<{
           createWorker: () => Worker
         }>
