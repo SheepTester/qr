@@ -1,7 +1,7 @@
 import { PointerEvent, useEffect, useRef, useState } from 'react'
+import { useQr, UseQrOptions } from './generator/useQr'
 import './global.css'
 import styles from './PeerApp.module.css'
-import { useQr, UseQrOptions } from './generator/useQr'
 
 type DragState = {
   initX: number
