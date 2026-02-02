@@ -1,3 +1,10 @@
+body {
+  background-color: #030712;
+  color: #f3f4f6;
+  position: relative;
+  color-scheme: dark;
+}
+
 .qrWrapper {
   position: fixed;
   display: flex;
@@ -21,4 +28,10 @@
 }
 .generatedQr {
   width: 100%;
+  background-color: white;
+  border-radius: calc(400% / var(--module-count));
+}
+
+.cameraBar {
+  display: flex;
 }

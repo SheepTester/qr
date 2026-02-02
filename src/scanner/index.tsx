@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
-import * as Icon from 'react-feather'
 import common from '../common.module.css'
 import { useObjectUrl } from '../lib/useObjectUrl'
+import { CameraSelect } from './CameraSelect'
 import styles from './index.module.css'
 import QrScanner from './qr-scanner'
 import { Result } from './Result'
@@ -96,7 +96,16 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
     }
     scannerRef.current ??= new QrScanner(video, handleResult, {
       returnDetailedScanResult: true,
-      preferredCamera
+      preferredCamera,
+      calculateScanRegion: video => {
+        const smallestDimension = Math.min(video.videoWidth, video.videoHeight)
+        return {
+          x: Math.round((video.videoWidth - smallestDimension) / 2),
+          y: Math.round((video.videoHeight - smallestDimension) / 2),
+          width: smallestDimension,
+          height: smallestDimension
+        }
+      }
     })
     await scannerRef.current.start()
     setScanState({
@@ -184,7 +193,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       <div
         className={`${styles.choose} ${
           media?.type === 'video' ? styles.scanning : ''
-        }`}
+        } ${media || welcome ? '' : styles.chooseCentered}`}
       >
         <label className={styles.chooseFileLabel}>
           Paste, drop, or{' '}
@@ -221,41 +230,27 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
           </button>
         )}
         {media?.type === 'video' ? (
-          <div className={styles.selectCameraWrapper}>
-            <Icon.Camera />
-            <Icon.ChevronDown />
-            <select
-              className={styles.selectCamera}
-              aria-label='Camera'
-              value={preferredCamera}
-              onChange={async e => {
-                setPreferredCamera(e.currentTarget.value)
-                const scanner = scannerRef.current
-                const video = videoRef.current
-                if (scanner && video) {
-                  console.log(e.currentTarget.value)
-                  await scanner.setCamera(e.currentTarget.value)
-                  setScanState({
-                    type: 'scanning',
-                    width: video.videoWidth,
-                    height: video.videoHeight
-                  })
-                  setMedia({
-                    type: 'video',
-                    region: scanner.scanRegion
-                  })
-                }
-              }}
-            >
-              <option value='user'>Front camera</option>
-              <option value='environment'>Back camera</option>
-              {devices.map(({ deviceId, label }) => (
-                <option key={deviceId} value={deviceId}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <CameraSelect
+            cameras={devices}
+            cameraId={preferredCamera}
+            onCamera={async cameraId => {
+              setPreferredCamera(cameraId)
+              const scanner = scannerRef.current
+              const video = videoRef.current
+              if (scanner && video) {
+                await scanner.setCamera(cameraId)
+                setScanState({
+                  type: 'scanning',
+                  width: video.videoWidth,
+                  height: video.videoHeight
+                })
+                setMedia({
+                  type: 'video',
+                  region: scanner.scanRegion
+                })
+              }
+            }}
+          />
         ) : null}
       </div>
       <div

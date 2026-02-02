@@ -56,8 +56,10 @@ export function useQr (
       ),
       code.modules.size
     )
-    context.current.canvas.width = code.modules.size + QUIET_ZONE * 2
-    context.current.canvas.height = code.modules.size + QUIET_ZONE * 2
+    const fullSize = code.modules.size + QUIET_ZONE * 2
+    context.current.canvas.width = fullSize
+    context.current.canvas.height = fullSize
+    context.current.canvas.style.setProperty('--module-count', `${fullSize}`)
     context.current.putImageData(image, QUIET_ZONE, QUIET_ZONE)
   }, [code])
 
