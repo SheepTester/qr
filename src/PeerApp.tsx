@@ -1,8 +1,7 @@
-import { PointerEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { PointerEvent, useEffect, useRef, useState } from 'react'
 import './global.css'
 import styles from './PeerApp.module.css'
-import { create } from 'qrcode'
-import { QUIET_ZONE } from './lib/constants'
+import { useQr, UseQrOptions } from './lib/useQr'
 
 type DragState = {
   initX: number
@@ -16,11 +15,12 @@ const MIN_MARGIN = 0.05
 const clamp = (value: number) =>
   Math.max(Math.min(value, 1 - MIN_MARGIN), MIN_MARGIN)
 
+const qrOptions: UseQrOptions = { className: styles.generatedQr }
+
 export function PeerApp () {
   const [x, setX] = useState(0.5)
   const [y, setY] = useState(0.5)
   const dragStateRef = useRef<DragState | null>(null)
-  const context = useRef<CanvasRenderingContext2D | null>(null)
   const [text, setText] = useState('hello')
 
   useEffect(() => {
@@ -41,32 +41,7 @@ export function PeerApp () {
     }
   }
 
-  // TODO: Make this a shared hook/component
-  const code = useMemo(() => {
-    try {
-      return create(text, { errorCorrectionLevel: 'low' })
-    } catch (error) {
-      console.error('QR code creation error', error)
-      return null
-    }
-  }, [text])
-
-  useEffect(() => {
-    if (!context.current || !code) {
-      return
-    }
-    const image = new ImageData(
-      new Uint8ClampedArray(
-        Array.from(code.modules.data, bit =>
-          bit ? [0, 0, 0, 255] : [255, 255, 255, 0]
-        ).flat()
-      ),
-      code.modules.size
-    )
-    context.current.canvas.width = code.modules.size + QUIET_ZONE * 2
-    context.current.canvas.height = code.modules.size + QUIET_ZONE * 2
-    context.current.putImageData(image, QUIET_ZONE, QUIET_ZONE)
-  }, [code])
+  const { canvas } = useQr(text, qrOptions)
 
   return (
     <div
@@ -103,12 +78,7 @@ export function PeerApp () {
       onPointerCancel={handlePointerEnd}
     >
       <div className={styles.horizontalSquarer}>
-        <div className={styles.verticalSquarer}>
-          <canvas
-            className={styles.generatedQr}
-            ref={canvas => (context.current = canvas?.getContext('2d') ?? null)}
-          />
-        </div>
+        <div className={styles.verticalSquarer}>{canvas}</div>
       </div>
     </div>
   )

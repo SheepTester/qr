@@ -20,7 +20,5 @@
   background-color: #0082;
 }
 .generatedQr {
-  image-rendering: pixelated;
-  image-rendering: crisp-edges;
   width: 100%;
 }

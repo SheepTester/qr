@@ -1,18 +1,17 @@
 import {
-  create,
   QRCodeErrorCorrectionLevel,
   QRCodeMaskPattern,
   QRCodeRenderersOptions,
   toCanvas,
   toString
 } from 'qrcode'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import common from '../common.module.css'
 import { download } from '../lib/download'
 import { GenerateButtons } from './GenerateButtons'
 import styles from './index.module.css'
 import { QrText } from './QrText'
-import { QUIET_ZONE } from '../lib/constants'
+import { useQr, UseQrOptions } from '../lib/useQr'
 
 export type GeneratorProps = {
   welcome: boolean
@@ -32,52 +31,16 @@ export function Generator ({
   const [pixelSize, setPixelSize] = useState('10')
   const [opaque, setOpaque] = useState(true)
   const [margin, setMargin] = useState(true)
-  const context = useRef<CanvasRenderingContext2D | null>(null)
 
-  const code = useMemo(() => {
-    try {
-      return create(text, {
-        errorCorrectionLevel: ecl,
-        maskPattern: mask ?? undefined
-      })
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.message === 'No input text') {
-          return { error: 'empty' } as const
-        }
-        if (
-          error.message ===
-          'The amount of data is too big to be stored in a QR Code'
-        ) {
-          return { error: 'too-big' } as const
-        }
-      }
-      console.error('Unknown QR code creation error', error)
-      return { error: 'unknown' } as const
-    }
-  }, [text, ecl, mask])
-
-  useEffect(() => {
-    if (!context.current) {
-      return
-    }
-    if ('error' in code) {
-      context.current.canvas.width = 0
-      context.current.canvas.height = 0
-      return
-    }
-    const image = new ImageData(
-      new Uint8ClampedArray(
-        Array.from(code.modules.data, bit =>
-          bit ? [0, 0, 0, 255] : [255, 255, 255, 0]
-        ).flat()
-      ),
-      code.modules.size
-    )
-    context.current.canvas.width = code.modules.size + QUIET_ZONE * 2
-    context.current.canvas.height = code.modules.size + QUIET_ZONE * 2
-    context.current.putImageData(image, QUIET_ZONE, QUIET_ZONE)
-  }, [code])
+  const qrOptions = useMemo<UseQrOptions>(
+    () => ({
+      errorCorrectionLevel: ecl,
+      maskPattern: mask ?? undefined,
+      className: styles.generatedQr
+    }),
+    [ecl, mask]
+  )
+  const { code, canvas } = useQr(text, qrOptions)
 
   function getQrOptions (): QRCodeRenderersOptions {
     return {
@@ -138,17 +101,14 @@ export function Generator ({
     >
       {welcome ? <h2 className={common.heading}>Generate a QR code</h2> : null}
       {!welcome ? (
-        'error' in code && code.error === 'too-big' ? (
+        code.error === 'too-big' ? (
           <div className={styles.error}>
             QR codes can't hold that much data!
           </div>
-        ) : 'error' in code && code.error === 'unknown' ? (
+        ) : code.error === 'unknown' ? (
           <div className={styles.error}>An error occurred.</div>
         ) : (
-          <canvas
-            className={styles.generatedQr}
-            ref={canvas => (context.current = canvas?.getContext('2d') ?? null)}
-          />
+          canvas
         )
       ) : null}
       {!welcome ? (
