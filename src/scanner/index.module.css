@@ -30,7 +30,8 @@
 }
 @media (max-width: 530px) {
   .choose {
-    padding: 0 10px;
+    padding: 10px;
+    gap: 0;
     flex-direction: column;
   }
   .scanning {
@@ -101,7 +102,8 @@
 .heightConstraint {
   height: 0;
   flex: auto;
-  width: 100%;
+  width: calc(100% - 20px);
+  margin: 0 10px;
   display: flex;
   justify-content: center;
   flex-direction: column;
@@ -142,4 +144,15 @@
   stroke-width: 2;
   stroke-linejoin: round;
   rx: 10;
+}
+.status {
+  border-top: 1px solid #374151;
+  margin-top: 16px;
+  text-align: initial;
+  max-height: 150px;
+  overflow: auto;
+}
+.statusText {
+  padding: 20px;
+  color: #9ca3af;
 }

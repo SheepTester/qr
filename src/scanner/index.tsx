@@ -311,15 +311,17 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
           </svg>
         </div>
       </div>
-      <div>
-        {scanState.type === 'scanning' ? (
-          'Loading...'
-        ) : scanState.type === 'no-result' ? (
-          'No QR code found.'
-        ) : scanState.type === 'result' ? (
-          <Result text={scanState.data} />
-        ) : null}
-      </div>
+      {scanState.type !== 'awaiting-image' ? (
+        <div className={styles.status}>
+          {scanState.type === 'scanning' ? (
+            <div className={styles.statusText}>Loading...</div>
+          ) : scanState.type === 'no-result' ? (
+            <div className={styles.statusText}>No QR code found.</div>
+          ) : scanState.type === 'result' ? (
+            <Result text={scanState.data} />
+          ) : null}
+        </div>
+      ) : null}
     </div>
   )
 }

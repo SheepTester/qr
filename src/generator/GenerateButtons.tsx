@@ -40,7 +40,7 @@ export function GenerateButtons ({
             copyTimeout.current = setTimeout(() => {
               setCopied(false)
               copyTimeout.current = null
-            }, 1000)
+            }, 500)
           }}
           title='Copy QR code as PNG'
         >

@@ -1,10 +1,26 @@
 .result {
   display: flex;
+  align-items: start;
 }
 .text {
   white-space: pre-wrap;
+  flex: auto;
+  padding: 20px;
 
-  :is(a):hover {
+  &:is(a) {
     text-decoration: underline;
+    text-decoration-color: color-mix(in srgb, currentColor 50%, transparent);
+    &:hover {
+      text-decoration-color: currentColor;
+    }
+  }
+}
+.button {
+  flex: none;
+  display: flex;
+  padding: 18px;
+  color: #d1d5db;
+  &:hover {
+    color: #f3f4f6;
   }
 }

@@ -1,3 +1,4 @@
+import { useRef, useState } from 'react'
 import * as Icon from 'react-feather'
 import styles from './Result.module.css'
 
@@ -5,7 +6,12 @@ export type ResultProps = {
   text: string
 }
 export function Result ({ text }: ResultProps) {
+  const [copied, setCopied] = useState(false)
+  const copyTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   const url = getUrl(text)
+
+  const CopyIcon = copied ? Icon.Check : Icon.Copy
   const Component = url ? 'a' : 'span'
 
   return (
@@ -20,11 +26,20 @@ export function Result ({ text }: ResultProps) {
       <button
         className={styles.button}
         onClick={async () => {
+          setCopied(false)
+          if (copyTimeout.current !== null) {
+            clearTimeout(copyTimeout.current)
+          }
           await navigator.clipboard.writeText(text)
+          setCopied(true)
+          copyTimeout.current = setTimeout(() => {
+            setCopied(false)
+            copyTimeout.current = null
+          }, 500)
         }}
         title='Copy'
       >
-        <Icon.Copy aria-label='Copy to clipboard' />
+        <CopyIcon aria-label='Copy to clipboard' />
       </button>
     </div>
   )
