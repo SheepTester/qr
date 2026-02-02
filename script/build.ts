@@ -57,9 +57,10 @@ if (devMode) {
       })
     })
     if (stdout || stderr) {
-      console.warn('[stdout]')
+      console.warn(`[${entry}]`)
+      console.warn('[[stdout]]')
       console.warn(stdout)
-      console.warn('[stderr]')
+      console.warn('[[stderr]]')
       console.warn(stderr)
     }
   }
