@@ -4,6 +4,11 @@ body {
   position: relative;
   color-scheme: dark;
 }
+:global(#root) {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
 
 .qrWrapper {
   position: fixed;

@@ -3,6 +3,7 @@ import { useQr, UseQrOptions } from './generator/useQr'
 import './global.css'
 import styles from './PeerApp.module.css'
 import { CameraSelect } from './scanner/CameraSelect'
+import QrScanner from './scanner/qr-scanner'
 
 type DragState = {
   initX: number
@@ -24,9 +25,12 @@ export function PeerApp () {
   const dragStateRef = useRef<DragState | null>(null)
   const [text, setText] = useState('hello')
 
-  const [devices, setDevices] = useState<MediaDeviceInfo[]>([])
-  const [preferredCamera, setPreferredCamera] = useState('environment')
+  const [scanning, setScanning] = useState(false)
+  const videoRef = useRef<HTMLVideoElement | null>(null)
+  const scannerRef = useRef<QrScanner | null>(null)
 
+  const [devices, setDevices] = useState<MediaDeviceInfo[]>([])
+  const [preferredCamera, setPreferredCamera] = useState('user')
   useEffect(() => {
     navigator.mediaDevices
       .enumerateDevices()
@@ -58,6 +62,10 @@ export function PeerApp () {
   }
 
   const { canvas } = useQr(text, qrOptions)
+
+  const handleResult = (result: QrScanner.ScanResult) => {
+    console.log(result)
+  }
 
   return (
     <>
@@ -99,13 +107,69 @@ export function PeerApp () {
           <div className={styles.verticalSquarer}>{canvas}</div>
         </div>
       </div>
+      <video ref={videoRef} />
       <div className={styles.cameraBar}>
-        <button>Start</button>
+        {scanning ? (
+          <button
+            onClick={() => {
+              scannerRef.current?.stop()
+              setScanning(false)
+            }}
+          >
+            Stop
+          </button>
+        ) : (
+          <button
+            onClick={async () => {
+              const video = videoRef.current
+              if (!video) {
+                return
+              }
+              setScanning(true)
+              try {
+                scannerRef.current ??= new QrScanner(video, handleResult, {
+                  returnDetailedScanResult: true,
+                  preferredCamera,
+                  calculateScanRegion: video => {
+                    const smallestDimension = Math.min(
+                      video.videoWidth,
+                      video.videoHeight
+                    )
+                    return {
+                      x: Math.round((video.videoWidth - smallestDimension) / 2),
+                      y: Math.round(
+                        (video.videoHeight - smallestDimension) / 2
+                      ),
+                      width: smallestDimension,
+                      height: smallestDimension
+                    }
+                  }
+                })
+                await scannerRef.current.start()
+                setDevices(
+                  (await navigator.mediaDevices.enumerateDevices()).filter(
+                    device => device.deviceId && device.kind === 'videoinput'
+                  )
+                )
+              } catch (error) {
+                setScanning(false)
+                console.error('failed to start scanning', error)
+              }
+            }}
+          >
+            Start
+          </button>
+        )}
         <CameraSelect
           cameras={devices}
           cameraId={preferredCamera}
-          onCamera={cameraId => {
+          onCamera={async cameraId => {
             setPreferredCamera(cameraId)
+            const scanner = scannerRef.current
+            const video = videoRef.current
+            if (scanner && video) {
+              await scanner.setCamera(cameraId)
+            }
           }}
         />
       </div>
