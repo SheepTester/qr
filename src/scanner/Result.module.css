@@ -4,6 +4,7 @@
 }
 .text {
   white-space: pre-wrap;
+  word-break: break-word;
   flex: auto;
   padding: 20px;
 
