@@ -3,9 +3,8 @@ import styles from './QrText.module.css'
 export type QrTextProps = {
   text: string
   onText: (text: string) => void
-  onFocus: () => void
 }
-export function QrText ({ text, onText, onFocus }: QrTextProps) {
+export function QrText ({ text, onText }: QrTextProps) {
   return (
     <div className={styles.qrTextWrapper}>
       <textarea
@@ -14,7 +13,6 @@ export function QrText ({ text, onText, onFocus }: QrTextProps) {
         aria-label='Text or URL to encode in QR code'
         value={text}
         onChange={e => onText(e.currentTarget.value)}
-        onFocus={onFocus}
       />
       <div aria-hidden className={styles.qrTextSizer}>
         {text}&nbsp;

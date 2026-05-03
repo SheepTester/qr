@@ -133,7 +133,13 @@ export function Generator ({
           onMargin={setMargin}
         />
       ) : null}
-      <QrText text={text} onText={setText} onFocus={onUse} />
+      <QrText
+        text={text}
+        onText={text => {
+          setText(text)
+          onUse()
+        }}
+      />
     </div>
   )
 }
