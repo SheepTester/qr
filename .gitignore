@@ -1,3 +1,6 @@
 node_modules/
 dist/
 *.module.css.d.ts
+static/*.css
+static/*.js
+static/*.map
