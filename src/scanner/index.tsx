@@ -21,9 +21,9 @@ type SelectedMedia =
 export type ScannerProps = {
   welcome: boolean
   hidden: boolean
-  onUse: () => void
+  onUse_s: () => void
 }
-export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
+export function Scanner ({ welcome, hidden, onUse_s }: ScannerProps) {
   const [media, setMedia] = useState<SelectedMedia | null>(null)
   const imageUrl = useObjectUrl(media?.type === 'image' ? media.image : null)
   const [scanState, setScanState] = useState<ScanState>({
@@ -49,36 +49,39 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       )
   }, [])
 
-  async function handleImage (blob: Blob): Promise<void> {
-    onUse()
-    const bitmap = await createImageBitmap(blob)
-    setMedia({ type: 'image', image: blob })
-    setScanState({
-      type: 'scanning',
-      width: bitmap.width,
-      height: bitmap.height
-    })
-    scannerRef.current?.stop()
-    try {
-      const result = await QrScanner.scanImage(bitmap, {
-        returnDetailedScanResult: true
-      })
+  const handleImage = useCallback(
+    async (blob: Blob) => {
+      onUse_s()
+      const bitmap = await createImageBitmap(blob)
+      setMedia({ type: 'image', image: blob })
       setScanState({
-        ...result,
-        type: 'result',
+        type: 'scanning',
         width: bitmap.width,
         height: bitmap.height
       })
-      bitmap.close()
-    } catch (error) {
-      console.error(error)
-      setScanState({
-        type: 'no-result',
-        width: bitmap.width,
-        height: bitmap.height
-      })
-    }
-  }
+      scannerRef.current?.stop()
+      try {
+        const result = await QrScanner.scanImage(bitmap, {
+          returnDetailedScanResult: true
+        })
+        setScanState({
+          ...result,
+          type: 'result',
+          width: bitmap.width,
+          height: bitmap.height
+        })
+        bitmap.close()
+      } catch (error) {
+        console.error(error)
+        setScanState({
+          type: 'no-result',
+          width: bitmap.width,
+          height: bitmap.height
+        })
+      }
+    },
+    [onUse_s]
+  )
 
   function handleResult (result: QrScanner.ScanResult): void {
     setScanState(scanState => ({
@@ -114,7 +117,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       height: video.videoHeight
     })
     setMedia({ type: 'video', region: scannerRef.current.scanRegion })
-    onUse()
+    onUse_s()
     setDevices(
       (await navigator.mediaDevices.enumerateDevices()).filter(
         device => device.deviceId && device.kind === 'videoinput'
@@ -137,7 +140,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
         e.dataTransfer?.types.includes('Files')
       ) {
         e.preventDefault()
-        onUse()
+        onUse_s()
         setDragOver(true)
       }
     }
@@ -165,7 +168,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
       document.body.removeEventListener('dragleave', handleDragLeave)
       document.body.removeEventListener('drop', handleDrop)
     }
-  }, [])
+  }, [handleImage, onUse_s])
 
   const outlinePath =
     scanState.type === 'result'

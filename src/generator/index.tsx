@@ -17,13 +17,13 @@ export type GeneratorProps = {
   welcome: boolean
   hidden: boolean
   onUse: () => void
-  onKeyboard: (visible: boolean) => void
+  onKeyboard_s: (visible: boolean) => void
 }
 export function Generator ({
   welcome,
   hidden,
   onUse,
-  onKeyboard
+  onKeyboard_s
 }: GeneratorProps) {
   const [text, setText] = useState('')
   const [ecl, setEcl] = useState<QRCodeErrorCorrectionLevel>('M')
@@ -79,7 +79,7 @@ export function Generator ({
       navigator.virtualKeyboard.overlaysContent = true
 
       const handleGeometryChange = () => {
-        onKeyboard(!!navigator.virtualKeyboard?.boundingRect.height)
+        onKeyboard_s(!!navigator.virtualKeyboard?.boundingRect.height)
       }
       navigator.virtualKeyboard.addEventListener(
         'geometrychange',
@@ -92,7 +92,7 @@ export function Generator ({
         )
       }
     }
-  }, [])
+  }, [onKeyboard_s])
 
   return (
     <div
