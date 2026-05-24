@@ -42,7 +42,7 @@
   }
   .scanning {
     & .orScanOption,
-    & .chooseFileLabel {
+    & .chooseFileInstructions {
       display: none;
     }
   }
@@ -58,6 +58,10 @@
 .orScanOption {
   color: #9ca3af;
 }
+.pasteBtn {
+  padding: 0;
+}
+.pasteBtn,
 .chooseFile {
   color: #f43f5e;
   cursor: pointer;

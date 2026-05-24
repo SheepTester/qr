@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import common from '../common.module.css'
 import { useObjectUrl } from '../lib/useObjectUrl'
 import { CameraSelect } from './CameraSelect'
@@ -141,7 +141,7 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
         setDragOver(true)
       }
     }
-    const handleDragLeave = (e: DragEvent) => {
+    const handleDragLeave = () => {
       setDragOver(false)
     }
     const handleDrop = (e: DragEvent) => {
@@ -195,21 +195,39 @@ export function Scanner ({ welcome, hidden, onUse }: ScannerProps) {
           media?.type === 'video' ? styles.scanning : ''
         } ${media || welcome ? '' : styles.chooseCentered}`}
       >
-        <label className={styles.chooseFileLabel}>
-          Paste, drop, or{' '}
-          <span className={styles.chooseFile}>choose an image</span>
-          <input
-            type='file'
-            accept='image/*'
-            className={common.visuallyHidden}
-            onChange={e => {
-              const file = e.currentTarget.files?.[0]
-              if (file) {
-                handleImage(file)
+        <div className={styles.chooseFileInstructions}>
+          <button
+            className={styles.pasteBtn}
+            onClick={async () => {
+              for (const item of await navigator.clipboard.read()) {
+                const imageType = item.types.find(type =>
+                  type.startsWith('image/')
+                )
+                if (imageType) {
+                  handleImage(await item.getType(imageType))
+                  break
+                }
               }
             }}
-          />
-        </label>
+          >
+            Paste
+          </button>
+          , drop, or{' '}
+          <label>
+            <span className={styles.chooseFile}>choose an image</span>
+            <input
+              type='file'
+              accept='image/*'
+              className={common.visuallyHidden}
+              onChange={e => {
+                const file = e.currentTarget.files?.[0]
+                if (file) {
+                  handleImage(file)
+                }
+              }}
+            />
+          </label>
+        </div>
         <span className={styles.orScanOption}>or</span>
         {media?.type === 'video' ? (
           <button
