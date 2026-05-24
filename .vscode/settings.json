@@ -1,3 +1,3 @@
 {
-  "prettier.prettierPath": "@sheeptester/prettier"
+  "prettier.prettierPath": "node_modules/@sheeptester/prettier/index.cjs"
 }
