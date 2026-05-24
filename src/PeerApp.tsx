@@ -1,5 +1,5 @@
 import { PointerEvent, useEffect, useRef, useState } from 'react'
-import { useQr, UseQrOptions } from './generator/useQr'
+import { UseQrOptions, useQr } from './generator/useQr'
 import './global.css'
 import styles from './PeerApp.module.css'
 import { CameraSelect } from './scanner/CameraSelect'

@@ -40,7 +40,7 @@ export function App () {
       <Scanner
         welcome={tab === 'welcome'}
         hidden={tab === 'generate'}
-        onUse={() => setTab('scan')}
+        onUse_s={() => setTab('scan')}
       />
       {tab === 'welcome' ? (
         <div className={styles.orWrapper}>
@@ -51,7 +51,7 @@ export function App () {
         welcome={tab === 'welcome'}
         hidden={tab === 'scan'}
         onUse={() => setTab('generate')}
-        onKeyboard={setKeyboardVisible}
+        onKeyboard_s={setKeyboardVisible}
       />
     </main>
   )
