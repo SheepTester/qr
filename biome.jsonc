@@ -5,26 +5,21 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
-  "files": {
-    "includes": ["**", "!!**/dist"]
-  },
   "formatter": {
-    "enabled": true,
-    "indentStyle": "tab"
+    "enabled": false
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true
-    }
-  },
-  "javascript": {
-    "formatter": {
-      "quoteStyle": "double"
+      "recommended": false
+    },
+    "domains": {
+      "react": "recommended"
     }
   },
   "assist": {
-    "enabled": true,
+    // TEMP
+    "enabled": false,
     "actions": {
       "source": {
         "organizeImports": "on"
