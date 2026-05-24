@@ -426,10 +426,7 @@ class QrScanner {
     options: {
       scanRegion?: QrScanner.ScanRegion | null
       qrEngine?:
-        | Worker
-        | BarcodeDetector
-        | Promise<Worker | BarcodeDetector>
-        | null
+        Worker | BarcodeDetector | Promise<Worker | BarcodeDetector> | null
       canvas?: HTMLCanvasElement | null
       disallowCanvasResizing?: boolean
       alsoTryWithoutScanRegion?: boolean
@@ -1139,9 +1136,7 @@ class QrScanner {
 
   private static async _postWorkerMessage (
     qrEngineOrQrEnginePromise:
-      | Worker
-      | BarcodeDetector
-      | Promise<Worker | BarcodeDetector>,
+      Worker | BarcodeDetector | Promise<Worker | BarcodeDetector>,
     type: string,
     data?: any,
     transfer?: Transferable[]

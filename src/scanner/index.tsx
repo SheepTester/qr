@@ -6,14 +6,13 @@ import styles from './index.module.css'
 import QrScanner from './qr-scanner'
 import { Result } from './Result'
 
-type ScanState =
-  | {
-      width: number
-      height: number
-    } & (
-      | { type: 'awaiting-image' | 'scanning' | 'no-result' }
-      | ({ type: 'result'; mirrored?: boolean } & QrScanner.ScanResult)
-    )
+type ScanState = {
+  width: number
+  height: number
+} & (
+  | { type: 'awaiting-image' | 'scanning' | 'no-result' }
+  | ({ type: 'result'; mirrored?: boolean } & QrScanner.ScanResult)
+)
 type SelectedMedia =
   | { type: 'image'; image: Blob }
   | { type: 'video'; region: QrScanner.ScanRegion }

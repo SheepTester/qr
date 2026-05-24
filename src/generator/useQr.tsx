@@ -7,8 +7,7 @@ const QUIET_ZONE = 4
 
 export type UseQrOptions = QRCodeOptions & { className?: string }
 export type QrCodeOrError =
-  | (QRCode & { error?: undefined })
-  | { error: 'empty' | 'too-big' | 'unknown' }
+  (QRCode & { error?: undefined }) | { error: 'empty' | 'too-big' | 'unknown' }
 export type QrResult = {
   code: QrCodeOrError
   canvas: ReactNode

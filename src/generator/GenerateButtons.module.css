@@ -38,14 +38,19 @@
   background-color: white;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1), 0 5px 20px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 3px 10px rgba(0, 0, 0, 0.1),
+    0 5px 20px rgba(0, 0, 0, 0.1);
   width: max-content;
   display: flex;
   flex-direction: column;
   opacity: 0;
   transform: translateY(10px);
   visibility: hidden;
-  transition: opacity 0.2s, transform 0.2s, visibility 0.2s;
+  transition:
+    opacity 0.2s,
+    transform 0.2s,
+    visibility 0.2s;
   .genPanelWrapper:hover &,
   .genPanelWrapper:focus-within & {
     opacity: 1;
