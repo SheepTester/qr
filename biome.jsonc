@@ -18,8 +18,7 @@
     }
   },
   "assist": {
-    // TEMP
-    "enabled": false,
+    "enabled": true,
     "actions": {
       "source": {
         "organizeImports": "on"

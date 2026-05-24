@@ -41,4 +41,11 @@ $ yarn dev
 
 # Build
 $ yarn build
+
+# Lint
+$ npx biome lint
 ```
+
+### `_s` suffix
+
+One downside of React is that there's no convention to signal to consumers what should have a stable identity. I've chosen to suffix props that prefer a stable identity with `_s`.
