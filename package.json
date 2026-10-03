@@ -10,8 +10,7 @@
     "qrcode": "^1.5.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-feather": "^2.0.10",
-    "typed-css-modules": "^0.9.1"
+    "react-feather": "^2.0.10"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.15",
@@ -19,6 +18,10 @@
     "@types/qrcode": "^1.5.5",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "esbuild": "^0.23.0"
+    "esbuild": "^0.23.0",
+    "typed-css-modules": "^0.9.1"
+  },
+  "allowScripts": {
+    "esbuild@0.23.0": true
   }
 }

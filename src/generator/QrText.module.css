@@ -1,24 +1,23 @@
-.qrTextWrapper {
-  position: relative;
+.row {
   flex: none;
   max-height: 150px;
+  display: flex;
   overflow: hidden;
-  :global(.welcome) & {
-    margin: 0 40px;
-    height: 65px;
-    & textarea {
-      overflow: hidden;
-    }
-  }
-}
-.qrText,
-.qrTextSizer {
-  padding: 20px;
   border-top: 1px solid #9ca3af;
   :global(.welcome) & {
     border: 1px solid #9ca3af;
     border-radius: 10px;
+    margin: 0 40px;
+    height: 60px;
   }
+}
+.qrTextWrapper {
+  flex: 1 0 0;
+  position: relative;
+}
+.qrText,
+.qrTextSizer {
+  padding: 20px;
 }
 .qrText {
   position: absolute;
@@ -27,10 +26,26 @@
   &:focus {
     outline: none;
   }
+  :global(.welcome) & {
+    overflow: hidden;
+  }
 }
 .qrTextSizer {
   visibility: hidden;
   white-space: pre-wrap;
   word-break: break-word;
   margin: 0;
+}
+.pasteBtn {
+  flex: none;
+  padding: 0;
+  height: 100%;
+  aspect-ratio: 1;
+  border-left: 1px solid #9ca3af;
+  & svg {
+    stroke: #6b7280;
+  }
+  &:hover svg {
+    stroke: #111827;
+  }
 }
